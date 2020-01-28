@@ -26,7 +26,19 @@ tidy_permanova <- function(anov){
 }
 
 
-
+#' PERMANOVA with 2 group shuffle
+#'
+#' @param dist_matrix Distance matrix
+#' @param s_toTest data frame that holds the labels
+#' @param SampleID column name that holds the IDs
+#' @param group_label1 first fixed effect
+#' @param group_label2 second fixed effect
+#' @param rep_mes_label random effect
+#' @param perm number of permutations
+#' @param first_within should the first fixed effec be shuffled within group?
+#' @param second_within should the second fixed effec be shuffled within group?
+#' @return permuted PERMANOVA results in tidy form
+#' @export
 permanova_with_shuffle_2_groups <- function(dist_matrix, s_toTest, SampleID, group_label1, group_label2, rep_mes_label, covariates, perm, first_within=F, second_within=F){
   group_label1 <- enquo(group_label1)
   group_label2 <- enquo(group_label2)
