@@ -4,10 +4,24 @@
 \alias{tidy_permanova}
 \title{Tidy PERMANOVA}
 \usage{
-tidy_permanova(anov)
+tidy_permanova(x)
+}
+\arguments{
+\item{x}{an object returned from [vegan::adonis()].}
 }
 \value{
-tidy dataframe
+A \code{data.frame} with the following columns:
+  \item{term}{The name of the regression term.}
+  \item{df}{Degrees of freedom used by the model.}
+  \item{sumsq}{Sum of squares explained by this term.}
+  \item{meansq}{
+    Mean sum of squares. Equal to total sum of squares divided by degrees
+    of freedom.}
+  \item{statistic}{
+    The value of a pseudo-F-statistic to use in the permutation test.}
+  \item{r.squared}{
+    R-squared statistic, or the percent of variation explained by the model.}
+  \item{p.value}{P-value from the permutation test.}
 }
 \description{
 Tidy PERMANOVA

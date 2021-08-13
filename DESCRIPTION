@@ -9,4 +9,4 @@ Description: Contains permutation based permanova tests
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.1

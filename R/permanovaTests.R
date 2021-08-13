@@ -4,12 +4,27 @@ library(vegan)
 library(kylemisc)
 #' Tidy PERMANOVA
 #'
-#' @param anov
-#' @return tidy dataframe
+#' @param x an object returned from [vegan::adonis()].
+#' @return A \code{data.frame} with the following columns:
+#'   \item{term}{The name of the regression term.}
+#'   \item{df}{Degrees of freedom used by the model.}
+#'   \item{sumsq}{Sum of squares explained by this term.}
+#'   \item{meansq}{
+#'     Mean sum of squares. Equal to total sum of squares divided by degrees
+#'     of freedom.}
+#'   \item{statistic}{
+#'     The value of a pseudo-F-statistic to use in the permutation test.}
+#'   \item{r.squared}{
+#'     R-squared statistic, or the percent of variation explained by the model.}
+#'   \item{p.value}{P-value from the permutation test.}
 #' @export
-tidy_permanova <- function(anov){
-  data.frame(Term = rownames(anov$aov.tab), anov$aov.tab, row.names = NULL) %>%
-    rename(p.value = Pr..F.)
+tidy_permanova <- function (x) {
+  ret <- data.frame(
+    term = rownames(x$aov.tab), x$aov.tab,
+    stringsAsFactors = FALSE, row.names = NULL)
+  colnames(ret) <- c(
+    "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value")
+  ret
 }
 
 

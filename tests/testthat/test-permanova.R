@@ -22,12 +22,12 @@ cp_adonis <- vegan::adonis(cp_dist ~ study_group, data=cp_samples)
 
 test_that("Tidy funcion works", {
   expected <- data.frame(
-    Term = c("study_group", "Residuals", "Total"),
-    Df = c(1, 9, 10),
-    SumsOfSqs = c(0.141236772727273, 1.4724405, 1.61367727272727),
-    MeanSqs = c(0.141236772727273, 0.1636045, NA),
-    F.Model = c(0.863281711244329, NA, NA),
-    R2 = c(0.0875247951460386, 0.912475204853961, 1),
+    term = c("study_group", "Residuals", "Total"),
+    df = c(1, 9, 10),
+    sumsq = c(0.141236772727273, 1.4724405, 1.61367727272727),
+    meansq = c(0.141236772727273, 0.1636045, NA),
+    statistic = c(0.863281711244329, NA, NA),
+    r.squared = c(0.0875247951460386, 0.912475204853961, 1),
     p.value = c(0.635, NA, NA),
     stringsAsFactors = FALSE)
   expect_equal(tidy_permanova(cp_adonis), expected)
