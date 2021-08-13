@@ -30,6 +30,6 @@ test_that("Tidy funcion works", {
     r.squared = c(0.0875247951460386, 0.912475204853961, 1),
     p.value = c(0.635, NA, NA),
     stringsAsFactors = FALSE)
-  expect_equal(tidy_permanova(cp_adonis), expected)
+  expect_equal(tidy.adonis(cp_adonis), expected)
   #permanova_with_shuffle_2_groups(bc, s, SampleID, study_group, time_point, SubjectID, NA, 10, first_within=F, second_within=T)
 })

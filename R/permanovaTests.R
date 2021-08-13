@@ -18,7 +18,7 @@ library(kylemisc)
 #'     R-squared statistic, or the percent of variation explained by the model.}
 #'   \item{p.value}{P-value from the permutation test.}
 #' @export
-tidy_permanova <- function (x) {
+tidy.adonis <- function (x) {
   ret <- data.frame(
     term = rownames(x$aov.tab), x$aov.tab,
     stringsAsFactors = FALSE, row.names = NULL)
