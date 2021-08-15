@@ -2,4 +2,6 @@
 
 S3method(tidy,adonis)
 export(permanova_with_shuffle_2_groups)
+export(shuffle_between_groups)
+export(shuffle_within_groups)
 importFrom(broom,tidy)
