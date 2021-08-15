@@ -1,7 +1,3 @@
-
-library(dplyr)
-library(vegan)
-library(kylemisc)
 #' Tidy PERMANOVA
 #'
 #' @param x an object returned from [vegan::adonis()].
@@ -17,6 +13,7 @@ library(kylemisc)
 #'   \item{r.squared}{
 #'     R-squared statistic, or the percent of variation explained by the model.}
 #'   \item{p.value}{P-value from the permutation test.}
+#' @importFrom broom tidy
 #' @export
 tidy.adonis <- function (x) {
   ret <- data.frame(
