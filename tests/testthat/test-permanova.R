@@ -31,5 +31,29 @@ test_that("Tidy funcion works", {
     p.value = c(0.635, NA, NA),
     stringsAsFactors = FALSE)
   expect_equal(tidy.adonis(cp_adonis), expected)
-  #permanova_with_shuffle_2_groups(bc, s, SampleID, study_group, time_point, SubjectID, NA, 10, first_within=F, second_within=T)
+})
+
+test_that("PERMANOVA testing function works", {
+  expected <- data.frame(
+    term = c(
+      "study_group", "time_point", "study_group:time_point",
+      "Residuals", "Total"),
+    df = c(1, 1, 1, 7, 10),
+    sumsq = c(
+      0.141236772727273, 0.2546555, 0.161871833333333,
+      1.05591316666667, 1.61367727272727),
+    meansq = c(
+      0.141236772727273, 0.2546555, 0.161871833333333,
+      0.150844738095238, NA),
+    statistic = c(
+      0.936305598131642, 1.68819610956015, 1.07310228634646, NA, NA),
+    r.squared = c(
+      0.0875247951460386, 0.157810675222318, 0.100312395835974,
+      0.654352133795669, 1),
+    p.value = c(0.4, 0.1, 0.3, NA, NA),
+    stringsAsFactors = FALSE)
+  observed <- permanova_with_shuffle_2_groups(
+    cp_dist, cp_samples, SampleID, study_group, time_point, SubjectID,
+    NA, 9, first_within=F, second_within=T)
+  expect_equal(observed, expected)
 })
