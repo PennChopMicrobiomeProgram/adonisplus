@@ -7,7 +7,7 @@
 \method{tidy}{adonis}(x)
 }
 \arguments{
-\item{x}{an object returned from [vegan::adonis()].}
+\item{x}{an object returned from \code{vegan::adonis()}.}
 }
 \value{
 A \code{data.frame} with the following columns:

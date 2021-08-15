@@ -2,43 +2,46 @@
 % Please edit documentation in R/permanovaTests.R
 \name{permanova_with_shuffle_2_groups}
 \alias{permanova_with_shuffle_2_groups}
-\title{PERMANOVA with 2 group shuffle}
+\title{Permutational multivariate analysis of variance with restricted permutations}
 \usage{
 permanova_with_shuffle_2_groups(
-  dist_matrix,
-  s_toTest,
-  SampleID,
-  group_label1,
-  group_label2,
-  rep_mes_label,
-  covariates,
-  perm,
+  d,
+  data,
+  sample_id_col,
+  group1,
+  group2,
+  nesting_var,
+  covariates = NA,
+  permutations = 999,
+  seed = 42,
   first_within = F,
   second_within = F
 )
 }
 \arguments{
-\item{dist_matrix}{Distance matrix}
+\item{d}{Distance matrix. Can be a matrix or an object of class \code{dist}}
 
-\item{s_toTest}{data frame that holds the labels}
+\item{data}{Data to use in the test}
 
-\item{SampleID}{column name that holds the IDs}
+\item{sample_id_col}{Column of sample IDs, i.e. the identifiers that
+correspond to each item in the distance matrix}
 
-\item{group_label1}{first fixed effect}
+\item{group1}{First predictor variable, usually a factor}
 
-\item{group_label2}{second fixed effect}
+\item{group2}{Second predictor variable}
 
-\item{rep_mes_label}{random effect}
+\item{nesting_var}{Variable that defines the nesting in the experiment,
+typically indicating a subject ID or cage ID}
 
-\item{perm}{number of permutations}
+\item{permutations}{Number of permutations}
 
-\item{first_within}{should the first fixed effec be shuffled within group?}
+\item{first_within}{Should the first predictor be shuffled within group?}
 
-\item{second_within}{should the second fixed effec be shuffled within group?}
+\item{second_within}{Should the second fixed effec be shuffled within group?}
 }
 \value{
-permuted PERMANOVA results in tidy form
+The results from \code{vegan::adonis()} in tidy format
 }
 \description{
-PERMANOVA with 2 group shuffle
+Permutational multivariate analysis of variance with restricted permutations
 }

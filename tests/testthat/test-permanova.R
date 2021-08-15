@@ -53,7 +53,9 @@ test_that("PERMANOVA testing function works", {
     p.value = c(0.4, 0.1, 0.3, NA, NA),
     stringsAsFactors = FALSE)
   observed <- permanova_with_shuffle_2_groups(
-    cp_dist, cp_samples, SampleID, study_group, time_point, SubjectID,
-    NA, 9, first_within=F, second_within=T)
+    cp_dist, cp_samples, sample_id_col = SampleID,
+    group1 = study_group, group2 = time_point,
+    nesting_var = SubjectID,
+    covariates = NA, perm = 9, first_within = FALSE, second_within = TRUE)
   expect_equal(observed, expected)
 })
