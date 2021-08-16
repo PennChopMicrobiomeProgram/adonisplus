@@ -47,17 +47,13 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
                                             nesting_var, covariates = NA,
                                             permutations = 999, seed = 42,
                                             first_within=F, second_within=F) {
-  group1 <- rlang::enquo(group1)
-  group2 <- rlang::enquo(group2)
-  nesting_var <- rlang::enquo(nesting_var)
-  sample_id_col <- rlang::enquo(sample_id_col)
-
-  group1_name <- rlang::as_name(group1)
-  group2_name <- rlang::as_name(group2)
+  group1_name <- rlang::as_name(rlang::ensym(group1))
+  group2_name <- rlang::as_name(rlang::ensym(group2))
 
   set.seed(seed)
   data <- as.data.frame(data)
-  dist_toTest <- usedist::dist_subset(distmat, as.character(dplyr::pull(data, !!sample_id_col)))
+  sample_ids <- as.character(dplyr::pull(data, {{ sample_id_col }}))
+  dist_toTest <- usedist::dist_subset(distmat, sample_ids)
   form1 <- paste("dist_toTest", "~", group1_name, " * ", group2_name)
 
   if (!is.na(covariates)) {
@@ -77,18 +73,18 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
 
     if (first_within) {
       s_permuted <- s_permuted %>%
-        dplyr::mutate(!!group1 := shuffle_within_groups(!!group1, !!nesting_var))
+        dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ nesting_var }}))
     } else {
       s_permuted <- s_permuted %>%
-        dplyr::mutate(!!group1 := shuffle_between_groups(!!group1, !!nesting_var))
+        dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ nesting_var }}))
     }
 
     if (second_within) {
       s_permuted <- s_permuted %>%
-        dplyr::mutate(!!group2 := shuffle_within_groups(!!group2, !!nesting_var))
+        dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ nesting_var }}))
     } else {
       s_permuted <- s_permuted %>%
-        dplyr::mutate(!!group2 := shuffle_between_groups(!!group2, !!nesting_var))    }
+        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ nesting_var}}))    }
 
     a_permuted <- vegan::adonis(as.formula(form1), s_permuted, permutations = 4)
 
