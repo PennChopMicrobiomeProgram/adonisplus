@@ -41,11 +41,15 @@ tidy.adonis <- function (x) {
 #' @param second_within Should the second fixed effec be shuffled within group?
 #' @return The results from \code{vegan::adonis()} in tidy format
 #' @export
-adonis_repeated_measures <- function(data, distmat, group1, group2,
-                                     sample_id_var, rep_meas_var,
+adonis_repeated_measures <- function(data, distmat,
+                                     group1 = study_group,
+                                     group2 = study_day,
+                                     sample_id_var = SampleID,
+                                     rep_meas_var = SubjectID,
                                      covariates = NA, permutations = 999,
-                                     seed = 42, first_within = FALSE,
-                                     second_within = FALSE) {
+                                     seed = 42,
+                                     first_within = FALSE,
+                                     second_within = TRUE) {
   group1_name <- rlang::as_name(rlang::ensym(group1))
   group2_name <- rlang::as_name(rlang::ensym(group2))
 

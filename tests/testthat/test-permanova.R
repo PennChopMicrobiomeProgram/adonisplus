@@ -50,8 +50,6 @@ test_that("PERMANOVA testing function works", {
       0.654352133795669, 1),
     p.value = c(0.4, 0.1, 0.3, NA, NA))
   observed <- adonis_repeated_measures(
-    cp_samples, cp_dist, group1 = study_group, group2 = time_point,
-    sample_id_var = SampleID, rep_meas_var = SubjectID, permutations = 9,
-    first_within = FALSE, second_within = TRUE)
+    cp_samples, cp_dist, group2 = time_point, permutations = 9)
   expect_equal(observed, expected)
 })

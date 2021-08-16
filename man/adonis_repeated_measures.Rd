@@ -7,15 +7,15 @@
 adonis_repeated_measures(
   data,
   distmat,
-  group1,
-  group2,
-  sample_id_var,
-  rep_meas_var,
+  group1 = study_group,
+  group2 = study_day,
+  sample_id_var = SampleID,
+  rep_meas_var = SubjectID,
   covariates = NA,
   permutations = 999,
   seed = 42,
   first_within = FALSE,
-  second_within = FALSE
+  second_within = TRUE
 )
 }
 \arguments{
