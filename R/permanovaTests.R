@@ -52,19 +52,22 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
   nesting_var <- rlang::enquo(nesting_var)
   sample_id_col <- rlang::enquo(sample_id_col)
 
+  group1_name <- rlang::as_name(group1)
+  group2_name <- rlang::as_name(group2)
+
   set.seed(seed)
   data <- as.data.frame(data)
   dist_toTest <- usedist::dist_subset(distmat, as.character(dplyr::pull(data, !!sample_id_col)))
-  form1 <- paste("dist_toTest", "~", rlang::quo_text(group1), " * ", rlang::quo_text(group2))
+  form1 <- paste("dist_toTest", "~", group1_name, " * ", group2_name)
 
   if (!is.na(covariates)) {
     form1 <- paste(form1, " + ", covariates)
   }
   a_ixn_orj <- vegan::adonis(as.formula(form1), data=data, permutations=permutations)
 
-  terms_perm <- c(rlang::quo_text(group1),
-                  rlang::quo_text(group2),
-                  paste0(rlang::quo_text(group1), ":", rlang::quo_text(group2)))
+  terms_perm <- c(group1_name,
+                  group2_name,
+                  paste0(group1_name, ":", group2_name))
 
   tidy_output <- tidy.adonis(a_ixn_orj)
   f_ixn_all <- tidy_output[match(terms_perm, tidy_output$term), "statistic"]
