@@ -1,6 +1,6 @@
 Package: adonisplus
 Type: Package
-Title: Random Helper Stats Functions
+Title: Bonus material for the adonis function
 Version: 0.1.0
 Authors@R:
   c(person(given = "Ceylan",
@@ -11,8 +11,8 @@ Authors@R:
            family = "Bittinger",
            email = "kylebittinger@gmail.com",
            role = c("aut")))
-Description: Contains permutation based permanova tests
-    Also tidy functions for mixed effects model tests
+Description: Contains a tidy method for adonis results, custom permutation
+  functions, and a version of adonis for repeated measures designs.
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
