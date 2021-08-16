@@ -1,4 +1,4 @@
 library(testthat)
-library(miscStats)
+library(adonisplus)
 
-test_check("permanovaTests")
+test_check("adonisplus")
