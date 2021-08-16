@@ -1,3 +1,7 @@
+#' @importFrom generics tidy
+#' @export
+generics::tidy
+
 #' Tidy an \code{adonis} object
 #'
 #' @param x an object returned from \code{vegan::adonis()}.
@@ -13,7 +17,6 @@
 #'   \item{r.squared}{
 #'     R-squared statistic, or the percent of variation explained by the model.}
 #'   \item{p.value}{P-value from the permutation test.}
-#' @importFrom broom tidy
 #' @export
 tidy.adonis <- function (x) {
   ret <- tibble::as_tibble(x$aov.tab, rownames = "term")

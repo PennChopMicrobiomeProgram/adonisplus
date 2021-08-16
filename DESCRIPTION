@@ -11,9 +11,9 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 Imports:
-    broom,
+    generics (>= 0.0.2),
     rlang,
     vegan,
     usedist,
-    dplyr,
-    tibble
+    dplyr (>= 1.0.0),
+    tibble (>= 3.0.0)
