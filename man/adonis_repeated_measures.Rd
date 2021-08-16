@@ -14,14 +14,14 @@ adonis_repeated_measures(
   covariates = NA,
   permutations = 999,
   seed = 42,
-  first_within = FALSE,
-  second_within = TRUE
+  group1_within = FALSE,
+  group2_within = TRUE
 )
 }
 \arguments{
 \item{data}{Data to use in the test}
 
-\item{distmat}{Distance matrix. Can be a matrix or an object of class
+\item{distmat}{Distance matrix, either a matrix or an object of class
 \code{dist}}
 
 \item{group1}{First predictor variable, usually a factor}
@@ -31,14 +31,22 @@ adonis_repeated_measures(
 \item{sample_id_var}{Variable that defines the sample IDs, i.e. the
 identifiers that correspond to each item in the distance matrix}
 
-\item{rep_meas_var}{Variable that defines the nesting in the experiment,
-typically indicating a subject ID or cage ID}
+\item{rep_meas_var}{Variable that indicates the repeated measures in the
+experiment, typically a subject ID or cage ID}
 
 \item{permutations}{Number of permutations}
 
-\item{first_within}{Should the first predictor be shuffled within group?}
+\item{group1_within}{Does the first predictor change within the unit of
+repeated measures? Typically, the first predictor is a study group, into
+which each subject is assigned. In this case, the study group is
+constant within each subject, and \code{first_within} should be
+\code{FALSE}.}
 
-\item{second_within}{Should the second fixed effec be shuffled within group?}
+\item{group2_within}{Does the second predictor change within the unit of
+repeated measures? Typically, the second predictor is a study day, and
+each subject is sampled over time. In this case, the study day assumes
+several values within each subject, and \code{group2_within} should be
+\code{TRUE}.}
 }
 \value{
 The results from \code{vegan::adonis()} in tidy format

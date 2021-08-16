@@ -29,19 +29,26 @@ tidy.adonis <- function (x) {
 
 #' Permutational multivariate analysis of variance for repeated measures
 #'
-#'
 #' @param data Data to use in the test
-#' @param distmat Distance matrix. Can be a matrix or an object of class
+#' @param distmat Distance matrix, either a matrix or an object of class
 #'   \code{dist}
 #' @param sample_id_var Variable that defines the sample IDs, i.e. the
 #'   identifiers that correspond to each item in the distance matrix
 #' @param group1 First predictor variable, usually a factor
 #' @param group2 Second predictor variable
-#' @param rep_meas_var Variable that defines the nesting in the experiment,
-#'   typically indicating a subject ID or cage ID
+#' @param rep_meas_var Variable that indicates the repeated measures in the
+#'   experiment, typically a subject ID or cage ID
 #' @param permutations Number of permutations
-#' @param first_within Should the first predictor be shuffled within group?
-#' @param second_within Should the second fixed effec be shuffled within group?
+#' @param group1_within Does the first predictor change within the unit of
+#'   repeated measures? Typically, the first predictor is a study group, into
+#'   which each subject is assigned. In this case, the study group is
+#'   constant within each subject, and \code{first_within} should be
+#'   \code{FALSE}.
+#' @param group2_within Does the second predictor change within the unit of
+#'   repeated measures? Typically, the second predictor is a study day, and
+#'   each subject is sampled over time. In this case, the study day assumes
+#'   several values within each subject, and \code{group2_within} should be
+#'   \code{TRUE}.
 #' @return The results from \code{vegan::adonis()} in tidy format
 #' @export
 adonis_repeated_measures <- function(data, distmat,
@@ -51,8 +58,8 @@ adonis_repeated_measures <- function(data, distmat,
                                      rep_meas_var = SubjectID,
                                      covariates = NA, permutations = 999,
                                      seed = 42,
-                                     first_within = FALSE,
-                                     second_within = TRUE) {
+                                     group1_within = FALSE,
+                                     group2_within = TRUE) {
   group1_name <- rlang::as_name(rlang::ensym(group1))
   group2_name <- rlang::as_name(rlang::ensym(group2))
 
@@ -77,7 +84,7 @@ adonis_repeated_measures <- function(data, distmat,
   fs_permuted <- replicate(permutations, {
     trial_data <- data
 
-    if (first_within) {
+    if (group1_within) {
       trial_data <- trial_data %>%
         dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ rep_meas_var }}))
     } else {
@@ -85,7 +92,7 @@ adonis_repeated_measures <- function(data, distmat,
         dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ rep_meas_var }}))
     }
 
-    if (second_within) {
+    if (group2_within) {
       trial_data <- trial_data %>%
         dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ rep_meas_var }}))
     } else {
