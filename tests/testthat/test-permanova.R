@@ -1,4 +1,11 @@
-cp_dist <- structure(
+example_data <- tibble::tibble(
+  SampleID = c(
+    "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"),
+  time_point = c(rep("C", 5), rep("P", 6)),
+  SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
+  study_group = rep(c("G1", "G2", "G1", "G2"), c(3, 2, 3, 3)))
+
+example_dist <- structure(
   c(
     0.367, 0.495, 0.425, 0.432, 0.698, 0.812, 0.698, 0.605, 0.41, 0.522, 0.461,
     0.417, 0.411, 0.687, 0.809, 0.655, 0.618, 0.385, 0.47, 0.348, 0.233, 0.416,
@@ -9,17 +16,7 @@ cp_dist <- structure(
   Size = 11L, call = quote(as.dist.default(m = cp_dist)), class = "dist",
   Diag = FALSE, Upper = FALSE)
 
-cp_samples <- tibble::tibble(
-  SampleID = c(
-    "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"),
-  time_point = c(rep("C", 5), rep("P", 6)),
-  SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
-  study_group = rep(c("G1", "G2", "G1", "G2"), c(3, 2, 3, 3)))
-
-set.seed(42)
-cp_adonis <- vegan::adonis(cp_dist ~ study_group, data=cp_samples)
-
-test_that("PERMANOVA testing function works", {
+test_that("adonis_repeated_measures produces expected result", {
   expected <- tibble::tibble(
     term = c(
       "study_group", "time_point", "study_group:time_point",
@@ -38,6 +35,6 @@ test_that("PERMANOVA testing function works", {
       0.654352133795669, 1),
     p.value = c(0.4, 0.1, 0.3, NA, NA))
   observed <- adonis_repeated_measures(
-    cp_samples, cp_dist, group2 = time_point, permutations = 9)
+    example_data, example_dist, group2 = time_point, permutations = 9)
   expect_equal(observed, expected)
 })
