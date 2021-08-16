@@ -2,7 +2,7 @@
 % Please edit documentation in R/permanovaTests.R
 \name{tidy.adonis}
 \alias{tidy.adonis}
-\title{Tidy PERMANOVA}
+\title{Tidy an \code{adonis} object}
 \usage{
 \method{tidy}{adonis}(x)
 }
@@ -24,5 +24,5 @@ A \code{tibble} with the following columns:
   \item{p.value}{P-value from the permutation test.}
 }
 \description{
-Tidy PERMANOVA
+Tidy an \code{adonis} object
 }

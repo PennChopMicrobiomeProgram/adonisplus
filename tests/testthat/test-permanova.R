@@ -9,13 +9,12 @@ cp_dist <- structure(
   Size = 11L, call = quote(as.dist.default(m = cp_dist)), class = "dist",
   Diag = FALSE, Upper = FALSE)
 
-cp_samples <- data.frame(
+cp_samples <- tibble::tibble(
   SampleID = c(
     "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"),
   time_point = c(rep("C", 5), rep("P", 6)),
   SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
-  study_group = rep(c("G1", "G2", "G1", "G2"), c(3, 2, 3, 3)),
-  stringsAsFactors = FALSE)
+  study_group = rep(c("G1", "G2", "G1", "G2"), c(3, 2, 3, 3)))
 
 set.seed(42)
 cp_adonis <- vegan::adonis(cp_dist ~ study_group, data=cp_samples)
@@ -50,10 +49,9 @@ test_that("PERMANOVA testing function works", {
       0.0875247951460386, 0.157810675222318, 0.100312395835974,
       0.654352133795669, 1),
     p.value = c(0.4, 0.1, 0.3, NA, NA))
-  observed <- adonis_nested(
-    cp_samples, cp_dist, sample_id_col = SampleID,
-    group1 = study_group, group2 = time_point,
-    nesting_var = SubjectID, permutations = 9,
+  observed <- adonis_repeated_measures(
+    cp_samples, cp_dist, group1 = study_group, group2 = time_point,
+    sample_id_var = SampleID, rep_meas_var = SubjectID, permutations = 9,
     first_within = FALSE, second_within = TRUE)
   expect_equal(observed, expected)
 })

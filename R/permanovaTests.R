@@ -1,4 +1,4 @@
-#' Tidy PERMANOVA
+#' Tidy an \code{adonis} object
 #'
 #' @param x an object returned from \code{vegan::adonis()}.
 #' @return A \code{tibble} with the following columns:
@@ -24,31 +24,33 @@ tidy.adonis <- function (x) {
 }
 
 
-#' Permutational multivariate analysis of variance with restricted permutations
+#' Permutational multivariate analysis of variance for repeated measures
+#'
 #'
 #' @param data Data to use in the test
 #' @param distmat Distance matrix. Can be a matrix or an object of class
 #'   \code{dist}
-#' @param sample_id_col Column of sample IDs, i.e. the identifiers that
-#'   correspond to each item in the distance matrix
+#' @param sample_id_var Variable that defines the sample IDs, i.e. the
+#'   identifiers that correspond to each item in the distance matrix
 #' @param group1 First predictor variable, usually a factor
 #' @param group2 Second predictor variable
-#' @param nesting_var Variable that defines the nesting in the experiment,
+#' @param rep_meas_var Variable that defines the nesting in the experiment,
 #'   typically indicating a subject ID or cage ID
 #' @param permutations Number of permutations
 #' @param first_within Should the first predictor be shuffled within group?
 #' @param second_within Should the second fixed effec be shuffled within group?
 #' @return The results from \code{vegan::adonis()} in tidy format
 #' @export
-adonis_nested <- function(data, distmat, sample_id_col, group1, group2,
-                          nesting_var, covariates = NA, permutations = 999,
-                          seed = 42, first_within = FALSE,
-                          second_within = FALSE) {
+adonis_repeated_measures <- function(data, distmat, group1, group2,
+                                     sample_id_var, rep_meas_var,
+                                     covariates = NA, permutations = 999,
+                                     seed = 42, first_within = FALSE,
+                                     second_within = FALSE) {
   group1_name <- rlang::as_name(rlang::ensym(group1))
   group2_name <- rlang::as_name(rlang::ensym(group2))
 
   set.seed(seed)
-  sample_ids <- as.character(dplyr::pull(data, {{ sample_id_col }}))
+  sample_ids <- as.character(dplyr::pull(data, {{ sample_id_var }}))
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
   adonis_formula <- paste("distmat", "~", group1_name, " * ", group2_name)
@@ -70,18 +72,18 @@ adonis_nested <- function(data, distmat, sample_id_col, group1, group2,
 
     if (first_within) {
       trial_data <- trial_data %>%
-        dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ nesting_var }}))
+        dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ rep_meas_var }}))
     } else {
       trial_data <- trial_data %>%
-        dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ nesting_var }}))
+        dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ rep_meas_var }}))
     }
 
     if (second_within) {
       trial_data <- trial_data %>%
-        dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ nesting_var }}))
+        dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ rep_meas_var }}))
     } else {
       trial_data <- trial_data %>%
-        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ nesting_var}}))
+        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ rep_meas_var}}))
     }
 
     trial_a <- vegan::adonis(adonis_formula, trial_data, permutations = 4)
