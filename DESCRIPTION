@@ -2,8 +2,15 @@ Package: miscStats
 Type: Package
 Title: Random Helper Stats Functions
 Version: 0.1.0
-Author: Ceylan Tanes
-Maintainer: Ceylan Tanes <ctanes@gmail.com>
+Authors@R:
+  c(person(given = "Ceylan",
+           family = "Tanes",
+           email = "ctanes@gmail.com",
+           role = c("aut", "cre")),
+    person(given = "Kyle",
+           family = "Bittinger",
+           email = "kylebittinger@gmail.com",
+           role = c("aut")))
 Description: Contains permutation based permanova tests
     Also tidy functions for mixed effects model tests
 License: GPL-3 + file LICENSE
