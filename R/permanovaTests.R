@@ -53,47 +53,48 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
   set.seed(seed)
   data <- as.data.frame(data)
   sample_ids <- as.character(dplyr::pull(data, {{ sample_id_col }}))
-  dist_toTest <- usedist::dist_subset(distmat, sample_ids)
-  form1 <- paste("dist_toTest", "~", group1_name, " * ", group2_name)
+  distmat <- usedist::dist_subset(distmat, sample_ids)
 
+  adonis_formula <- paste("distmat", "~", group1_name, " * ", group2_name)
   if (!is.na(covariates)) {
-    form1 <- paste(form1, " + ", covariates)
+    adonis_formula <- paste(adonis_formula, " + ", covariates)
   }
-  a_ixn_orj <- vegan::adonis(as.formula(form1), data=data, permutations=permutations)
+  adonis_formula <- as.formula(adonis_formula)
 
-  terms_perm <- c(group1_name,
-                  group2_name,
-                  paste0(group1_name, ":", group2_name))
+  a_observed <- vegan::adonis(adonis_formula, data=data, permutations=permutations)
+  res <- tidy.adonis(a_observed)
 
-  tidy_output <- tidy.adonis(a_ixn_orj)
-  term_idxs <- match(terms_perm, tidy_output$term)
-  f_ixn_all <- tidy_output[term_idxs, "statistic"]
+  terms_to_permute <- c(
+    group1_name, group2_name, paste0(group1_name, ":", group2_name))
+  term_idxs <- match(terms_to_permute, res$term)
+  f_observed <- res[term_idxs, "statistic"]
 
   fs_permuted <- replicate(permutations, {
-    s_permuted <- data
+    trial_data <- data
 
     if (first_within) {
-      s_permuted <- s_permuted %>%
+      trial_data <- trial_data %>%
         dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ nesting_var }}))
     } else {
-      s_permuted <- s_permuted %>%
+      trial_data <- trial_data %>%
         dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ nesting_var }}))
     }
 
     if (second_within) {
-      s_permuted <- s_permuted %>%
+      trial_data <- trial_data %>%
         dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ nesting_var }}))
     } else {
-      s_permuted <- s_permuted %>%
-        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ nesting_var}}))    }
+      trial_data <- trial_data %>%
+        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ nesting_var}}))
+    }
 
-    a_permuted <- vegan::adonis(as.formula(form1), s_permuted, permutations = 4)
-
-    temp_output <- tidy.adonis(a_permuted)
-    temp_output[term_idxs, "statistic"]
+    trial_a <- vegan::adonis(adonis_formula, trial_data, permutations = 4)
+    trial_res <- tidy.adonis(trial_a)
+    trial_res[term_idxs, "statistic"]
   })
-  p_ixn <- rowSums(cbind(f_ixn_all, fs_permuted) >= f_ixn_all, na.rm = T) / (dim(fs_permuted)[2] + 1)
 
-  tidy_output[term_idxs, "p.value"] <- p_ixn
-  tidy_output
+  fs_greater <- sweep(cbind(f_observed, fs_permuted), 1, f_observed, `>=`)
+  p_permuted <- apply(fs_greater, 1, function (x) sum(x) / length(x))
+  res[term_idxs, "p.value"] <- p_permuted
+  res
 }
