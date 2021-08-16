@@ -21,20 +21,19 @@ set.seed(42)
 cp_adonis <- vegan::adonis(cp_dist ~ study_group, data=cp_samples)
 
 test_that("Tidy funcion works", {
-  expected <- data.frame(
+  expected <- tibble::tibble(
     term = c("study_group", "Residuals", "Total"),
     df = c(1, 9, 10),
     sumsq = c(0.141236772727273, 1.4724405, 1.61367727272727),
     meansq = c(0.141236772727273, 0.1636045, NA),
     statistic = c(0.863281711244329, NA, NA),
     r.squared = c(0.0875247951460386, 0.912475204853961, 1),
-    p.value = c(0.635, NA, NA),
-    stringsAsFactors = FALSE)
+    p.value = c(0.635, NA, NA))
   expect_equal(tidy.adonis(cp_adonis), expected)
 })
 
 test_that("PERMANOVA testing function works", {
-  expected <- data.frame(
+  expected <- tibble::tibble(
     term = c(
       "study_group", "time_point", "study_group:time_point",
       "Residuals", "Total"),
@@ -50,9 +49,8 @@ test_that("PERMANOVA testing function works", {
     r.squared = c(
       0.0875247951460386, 0.157810675222318, 0.100312395835974,
       0.654352133795669, 1),
-    p.value = c(0.4, 0.1, 0.3, NA, NA),
-    stringsAsFactors = FALSE)
-  observed <- permanova_with_shuffle_2_groups(
+    p.value = c(0.4, 0.1, 0.3, NA, NA))
+  observed <- adonis_nested(
     cp_samples, cp_dist, sample_id_col = SampleID,
     group1 = study_group, group2 = time_point,
     nesting_var = SubjectID, permutations = 9,

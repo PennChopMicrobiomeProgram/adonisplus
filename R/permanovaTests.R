@@ -1,7 +1,7 @@
 #' Tidy PERMANOVA
 #'
 #' @param x an object returned from \code{vegan::adonis()}.
-#' @return A \code{data.frame} with the following columns:
+#' @return A \code{tibble} with the following columns:
 #'   \item{term}{The name of the regression term.}
 #'   \item{df}{Degrees of freedom used by the model.}
 #'   \item{sumsq}{Sum of squares explained by this term.}
@@ -16,11 +16,10 @@
 #' @importFrom broom tidy
 #' @export
 tidy.adonis <- function (x) {
-  ret <- data.frame(
-    term = rownames(x$aov.tab), x$aov.tab,
-    stringsAsFactors = FALSE, row.names = NULL)
+  ret <- tibble::as_tibble(x$aov.tab, rownames = "term")
   colnames(ret) <- c(
     "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value")
+  attr(ret, "heading") <- NULL
   ret
 }
 
@@ -49,7 +48,6 @@ adonis_nested <- function(data, distmat, sample_id_col, group1, group2,
   group2_name <- rlang::as_name(rlang::ensym(group2))
 
   set.seed(seed)
-  data <- as.data.frame(data)
   sample_ids <- as.character(dplyr::pull(data, {{ sample_id_col }}))
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
@@ -65,7 +63,7 @@ adonis_nested <- function(data, distmat, sample_id_col, group1, group2,
   terms_to_permute <- c(
     group1_name, group2_name, paste0(group1_name, ":", group2_name))
   term_idxs <- match(terms_to_permute, res$term)
-  f_observed <- res[term_idxs, "statistic"]
+  f_observed <- res$statistic[term_idxs]
 
   fs_permuted <- replicate(permutations, {
     trial_data <- data
@@ -88,11 +86,11 @@ adonis_nested <- function(data, distmat, sample_id_col, group1, group2,
 
     trial_a <- vegan::adonis(adonis_formula, trial_data, permutations = 4)
     trial_res <- tidy.adonis(trial_a)
-    trial_res[term_idxs, "statistic"]
+    trial_res$statistic[term_idxs]
   })
 
   fs_greater <- sweep(cbind(f_observed, fs_permuted), 1, f_observed, `>=`)
   p_permuted <- apply(fs_greater, 1, function (x) sum(x) / length(x))
-  res[term_idxs, "p.value"] <- p_permuted
+  res$p.value[term_idxs] <- p_permuted
   res
 }

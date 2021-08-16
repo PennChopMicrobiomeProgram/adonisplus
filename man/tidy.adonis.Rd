@@ -10,7 +10,7 @@
 \item{x}{an object returned from \code{vegan::adonis()}.}
 }
 \value{
-A \code{data.frame} with the following columns:
+A \code{tibble} with the following columns:
   \item{term}{The name of the regression term.}
   \item{df}{Degrees of freedom used by the model.}
   \item{sumsq}{Sum of squares explained by this term.}
