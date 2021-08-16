@@ -27,8 +27,9 @@ tidy.adonis <- function (x) {
 
 #' Permutational multivariate analysis of variance with restricted permutations
 #'
-#' @param d Distance matrix. Can be a matrix or an object of class \code{dist}
 #' @param data Data to use in the test
+#' @param distmat Distance matrix. Can be a matrix or an object of class
+#'   \code{dist}
 #' @param sample_id_col Column of sample IDs, i.e. the identifiers that
 #'   correspond to each item in the distance matrix
 #' @param group1 First predictor variable, usually a factor
@@ -40,7 +41,7 @@ tidy.adonis <- function (x) {
 #' @param second_within Should the second fixed effec be shuffled within group?
 #' @return The results from \code{vegan::adonis()} in tidy format
 #' @export
-permanova_with_shuffle_2_groups <- function(d, data,
+permanova_with_shuffle_2_groups <- function(data, distmat,
                                             sample_id_col,
                                             group1, group2,
                                             nesting_var, covariates = NA,
@@ -53,7 +54,7 @@ permanova_with_shuffle_2_groups <- function(d, data,
 
   set.seed(seed)
   data <- as.data.frame(data)
-  dist_toTest <- usedist::dist_subset(d, as.character(dplyr::pull(data, !!sample_id_col)))
+  dist_toTest <- usedist::dist_subset(distmat, as.character(dplyr::pull(data, !!sample_id_col)))
   form1 <- paste("dist_toTest", "~", rlang::quo_text(group1), " * ", rlang::quo_text(group2))
 
   if (!is.na(covariates)) {

@@ -5,8 +5,8 @@
 \title{Permutational multivariate analysis of variance with restricted permutations}
 \usage{
 permanova_with_shuffle_2_groups(
-  d,
   data,
+  distmat,
   sample_id_col,
   group1,
   group2,
@@ -19,9 +19,10 @@ permanova_with_shuffle_2_groups(
 )
 }
 \arguments{
-\item{d}{Distance matrix. Can be a matrix or an object of class \code{dist}}
-
 \item{data}{Data to use in the test}
+
+\item{distmat}{Distance matrix. Can be a matrix or an object of class
+\code{dist}}
 
 \item{sample_id_col}{Column of sample IDs, i.e. the identifiers that
 correspond to each item in the distance matrix}
