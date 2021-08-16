@@ -66,7 +66,8 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
                   paste0(group1_name, ":", group2_name))
 
   tidy_output <- tidy.adonis(a_ixn_orj)
-  f_ixn_all <- tidy_output[match(terms_perm, tidy_output$term), "statistic"]
+  term_idxs <- match(terms_perm, tidy_output$term)
+  f_ixn_all <- tidy_output[term_idxs, "statistic"]
 
   fs_permuted <- replicate(permutations, {
     s_permuted <- data
@@ -89,10 +90,10 @@ permanova_with_shuffle_2_groups <- function(data, distmat,
     a_permuted <- vegan::adonis(as.formula(form1), s_permuted, permutations = 4)
 
     temp_output <- tidy.adonis(a_permuted)
-    temp_output[match(terms_perm, temp_output$term), "statistic"]
+    temp_output[term_idxs, "statistic"]
   })
   p_ixn <- rowSums(cbind(f_ixn_all, fs_permuted) >= f_ixn_all, na.rm = T) / (dim(fs_permuted)[2] + 1)
 
-  tidy_output[match(terms_perm, tidy_output$term), "p.value"] <- p_ixn
+  tidy_output[term_idxs, "p.value"] <- p_ixn
   tidy_output
 }
