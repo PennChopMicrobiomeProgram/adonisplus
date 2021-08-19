@@ -35,6 +35,8 @@ test_that("adonis_repeated_measures produces expected result", {
       0.654352133795669, 1),
     p.value = c(0.4, 0.1, 0.3, NA, NA))
   observed <- adonis_repeated_measures(
-    example_data, example_dist, group2 = time_point, permutations = 9)
+    example_data, example_dist,
+    group2 = time_point, rep_meas_var = SubjectID,
+    permutations = 9)
   expect_equal(observed, expected)
 })

@@ -10,37 +10,52 @@
 #' @param rep_meas_var Variable that indicates the repeated measures in the
 #'   experiment, typically a subject ID or cage ID
 #' @param permutations Number of permutations
-#' @param group1_within Does the first predictor change within the unit of
-#'   repeated measures? Typically, the first predictor is a study group, into
-#'   which each subject is assigned. In this case, the study group is
-#'   constant within each subject, and \code{first_within} should be
-#'   \code{FALSE}.
-#' @param group2_within Does the second predictor change within the unit of
-#'   repeated measures? Typically, the second predictor is a study day, and
-#'   each subject is sampled over time. In this case, the study day assumes
-#'   several values within each subject, and \code{group2_within} should be
-#'   \code{TRUE}.
+#' @param group1_permute How to perform restricted permutations for
+#'   \code{group1}, either \code{"between"} or \code{"within"}. Typically, the
+#'   first predictor is a study group, into which each subject is assigned.
+#'   In this case, the study group is constant within each subject, and
+#'   \code{group1_permute} should be \code{"between"}, to permute the study
+#'   groups between subjects.
+#' @param group2_permute How to perform restricted permutations for
+#'   \code{group2}, either \code{"between"} or \code{"within"}. Typically, the
+#'   second predictor is a study day, and each subject is sampled over time.
+#'   In this case, \code{group2_permute} should be \code{"within"}, to permute
+#'   the study days within each subject.
 #' @return The results from \code{vegan::adonis()} in tidy format
 #' @export
 adonis_repeated_measures <- function(data, distmat,
                                      group1 = study_group,
                                      group2 = study_day,
                                      sample_id_var = SampleID,
-                                     rep_meas_var = SubjectID,
+                                     rep_meas_var = subject_id,
                                      covariates = NA, permutations = 999,
                                      seed = 42,
-                                     group1_within = FALSE,
-                                     group2_within = TRUE) {
+                                     group1_permute = "between",
+                                     group2_permute = "within") {
   group1_name <- rlang::as_name(rlang::ensym(group1))
   group2_name <- rlang::as_name(rlang::ensym(group2))
+
+  group1_permute <- match.arg(group1_permute, c("between", "within"))
+  group2_permute <- match.arg(group2_permute, c("between", "within"))
+  permute_fcns <- list(
+    between = shuffle_between_groups,
+    within = shuffle_within_groups)
+  group1_fcn <- permute_fcns[[group1_permute]]
+  group2_fcn <- permute_fcns[[group2_permute]]
+
+  # Need to check that this function works properly in the context of group_by()
+  # This is why Ceylan had cast the table of samples to data.frame()
 
   set.seed(seed)
   sample_ids <- as.character(dplyr::pull(data, {{ sample_id_var }}))
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
-  adonis_formula <- paste("distmat", "~", group1_name, " * ", group2_name)
-  if (!is.na(covariates)) {
-    adonis_formula <- paste(adonis_formula, " + ", covariates)
+  if (is.na(covariates)) {
+    adonis_formula <- paste(
+      "distmat", "~", group1_name, " * ", group2_name)
+  } else {
+    adonis_formula <- paste(
+      "distmat", "~", covariates, " + ", group1_name, " * ", group2_name)
   }
   adonis_formula <- as.formula(adonis_formula)
 
@@ -53,24 +68,10 @@ adonis_repeated_measures <- function(data, distmat,
   f_observed <- res$statistic[term_idxs]
 
   fs_permuted <- replicate(permutations, {
-    trial_data <- data
 
-    if (group1_within) {
-      trial_data <- trial_data %>%
-        dplyr::mutate("{{ group1 }}" := shuffle_within_groups({{ group1 }}, {{ rep_meas_var }}))
-    } else {
-      trial_data <- trial_data %>%
-        dplyr::mutate("{{ group1 }}" := shuffle_between_groups({{ group1 }}, {{ rep_meas_var }}))
-    }
-
-    if (group2_within) {
-      trial_data <- trial_data %>%
-        dplyr::mutate("{{ group2 }}" := shuffle_within_groups({{ group2 }}, {{ rep_meas_var }}))
-    } else {
-      trial_data <- trial_data %>%
-        dplyr::mutate("{{ group2 }}" := shuffle_between_groups({{ group2 }}, {{ rep_meas_var}}))
-    }
-
+    trial_data <- data %>%
+      dplyr::mutate("{{ group1 }}" := group1_fcn({{ group1 }}, {{ rep_meas_var }})) %>%
+      dplyr::mutate("{{ group2 }}" := group2_fcn({{ group2 }}, {{ rep_meas_var }}))
     trial_a <- vegan::adonis(adonis_formula, trial_data, permutations = 4)
     trial_res <- tidy.adonis(trial_a)
     trial_res$statistic[term_idxs]
