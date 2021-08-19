@@ -51,12 +51,12 @@ adonis_repeated_measures <- function(data, distmat,
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
   if (is.na(covariates)) {
-    adonis_formula <- paste(
-      "distmat", "~", group1_name, " * ", group2_name)
+    adonis_formula <- paste0("distmat ~ ", group1_name, " * ", group2_name)
   } else {
-    adonis_formula <- paste(
-      "distmat", "~", covariates, " + ", group1_name, " * ", group2_name)
+    adonis_formula <- paste0(
+      "distmat ~ ", covariates, " + ", group1_name, " * ", group2_name)
   }
+
   adonis_formula <- as.formula(adonis_formula)
 
   a_observed <- vegan::adonis(adonis_formula, data=data, permutations=permutations)
