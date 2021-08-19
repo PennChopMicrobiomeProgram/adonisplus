@@ -46,7 +46,6 @@ adonis_repeated_measures <- function(data, distmat,
   # Need to check that this function works properly in the context of group_by()
   # This is why Ceylan had cast the table of samples to data.frame()
 
-  set.seed(seed)
   sample_ids <- as.character(dplyr::pull(data, {{ sample_id_var }}))
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
@@ -56,9 +55,9 @@ adonis_repeated_measures <- function(data, distmat,
     adonis_formula <- paste0(
       "distmat ~ ", covariates, " + ", group1_name, " * ", group2_name)
   }
-
   adonis_formula <- as.formula(adonis_formula)
 
+  set.seed(seed)
   a_observed <- vegan::adonis(adonis_formula, data=data, permutations=permutations)
   res <- tidy.adonis(a_observed)
 
@@ -68,7 +67,6 @@ adonis_repeated_measures <- function(data, distmat,
   f_observed <- res$statistic[term_idxs]
 
   fs_permuted <- replicate(permutations, {
-
     trial_data <- data %>%
       dplyr::mutate("{{ group1 }}" := group1_fcn({{ group1 }}, {{ rep_meas_var }})) %>%
       dplyr::mutate("{{ group2 }}" := group2_fcn({{ group2 }}, {{ rep_meas_var }}))
