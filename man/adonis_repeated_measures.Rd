@@ -10,12 +10,12 @@ adonis_repeated_measures(
   group1 = study_group,
   group2 = study_day,
   sample_id_var = SampleID,
-  rep_meas_var = SubjectID,
+  rep_meas_var = subject_id,
   covariates = NA,
   permutations = 999,
   seed = 42,
-  group1_within = FALSE,
-  group2_within = TRUE
+  group1_permute = "between",
+  group2_permute = "within"
 )
 }
 \arguments{
@@ -34,19 +34,28 @@ identifiers that correspond to each item in the distance matrix}
 \item{rep_meas_var}{Variable that indicates the repeated measures in the
 experiment, typically a subject ID or cage ID}
 
+\item{covariates}{Any additional covariates to include in the model,
+provided as a character vector. If \code{covariates} is not \code{NA}, the
+value is inserted directly into the model formula in front of the terms
+for \code{group1} and \code{group2}}
+
 \item{permutations}{Number of permutations}
 
-\item{group1_within}{Does the first predictor change within the unit of
-repeated measures? Typically, the first predictor is a study group, into
-which each subject is assigned. In this case, the study group is
-constant within each subject, and \code{first_within} should be
-\code{FALSE}.}
+\item{seed}{Random seed, set just before the initial call to
+\code{vegan::adonis()}}
 
-\item{group2_within}{Does the second predictor change within the unit of
-repeated measures? Typically, the second predictor is a study day, and
-each subject is sampled over time. In this case, the study day assumes
-several values within each subject, and \code{group2_within} should be
-\code{TRUE}.}
+\item{group1_permute}{How to perform restricted permutations for
+\code{group1}, either \code{"between"} or \code{"within"}. Typically, the
+first predictor is a study group, into which each subject is assigned.
+In this case, the study group is constant within each subject, and
+\code{group1_permute} should be \code{"between"}, to permute the study
+groups between subjects.}
+
+\item{group2_permute}{How to perform restricted permutations for
+\code{group2}, either \code{"between"} or \code{"within"}. Typically, the
+second predictor is a study day, and each subject is sampled over time.
+In this case, \code{group2_permute} should be \code{"within"}, to permute
+the study days within each subject.}
 }
 \value{
 The results from \code{vegan::adonis()} in tidy format

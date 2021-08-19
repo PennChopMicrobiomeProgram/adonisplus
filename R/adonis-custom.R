@@ -9,7 +9,13 @@
 #' @param group2 Second predictor variable
 #' @param rep_meas_var Variable that indicates the repeated measures in the
 #'   experiment, typically a subject ID or cage ID
+#' @param covariates Any additional covariates to include in the model,
+#'   provided as a character vector. If \code{covariates} is not \code{NA}, the
+#'   value is inserted directly into the model formula in front of the terms
+#'   for \code{group1} and \code{group2}
 #' @param permutations Number of permutations
+#' @param seed Random seed, set just before the initial call to
+#'   \code{vegan::adonis()}
 #' @param group1_permute How to perform restricted permutations for
 #'   \code{group1}, either \code{"between"} or \code{"within"}. Typically, the
 #'   first predictor is a study group, into which each subject is assigned.
