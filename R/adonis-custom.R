@@ -86,3 +86,90 @@ adonis_repeated_measures <- function(data, distmat,
   res$p.value[term_idxs] <- p_permuted
   res
 }
+
+#' Permutational multivariate analysis of variance. Should mostly be used
+#' internally for the permanova_posthoc function
+#'
+#' @param data Data to use in the test
+#' @param distmat Distance matrix, either a matrix or an object of class
+#'   \code{dist}
+#' @param formula_string The right side of the formula to test of class \code{character}
+#' @param sample_id_var Variable that defines the sample IDs, i.e. the
+#'   identifiers that correspond to each item in the distance matrix
+#' @param rep_meas_var Variable that indicates the repeated measures in the
+#'   experiment, typically a subject ID or cage ID. Will be passed to the strata
+#'   parameter in the \code{vegan::adonis()} call
+#' @param permutations Number of permutations
+#' @param seed Random seed, set just before the initial call to
+#'   \code{vegan::adonis()}
+#' @export
+adonis_run <- function(data, distmat,
+                       formula_string,
+                       sample_id_var = SampleID,
+                       rep_meas_var = subject_id,
+                       permutations = 999,
+                       seed = 42) {
+
+  sample_ids <- as.character(dplyr::pull(data, {{ sample_id_var }}))
+
+  if (!grepl("~", formula_string)) {
+    formula_string <- paste0("distmat ~ ", formula_string)
+  }
+  form1 <- as.formula(formula_string)
+
+  distmat <- usedist::dist_subset(distmat, sample_ids)
+
+  set.seed(seed)
+  if(is.null(rep_meas_var)) {
+    tidy_permanova(adonis(form1, data=s_toTest, permutations=perm))
+  } else {
+    tidy_permanova(adonis(form1, data=s_toTest, permutations=perm, strata=dplyr::pull(data, {{ rep_meas_var }}) ))
+  }
+}
+
+#' Permutational multivariate analysis of variance for pseudo post-hoc tests
+#' Subsets the data into pairs of groups and runs adonis
+#'
+#' @param data Data to use in the test
+#' @param distmat Distance matrix, either a matrix or an object of class
+#'   \code{dist}
+#' @param formula_string The right side of the formula to test of class \code{character}
+#' @param sample_id_var Variable that defines the sample IDs, i.e. the
+#'   identifiers that correspond to each item in the distance matrix
+#' @param rep_meas_var Variable that indicates the repeated measures in the
+#'   experiment, typically a subject ID or cage ID. Will be passed to the strata
+#'   parameter in the \code{vegan::adonis()} call
+#' @param group_var The variable to subset into pair,typically the study group.
+#'   Pairs of variable will be subset and tested again
+#' @param p_cutoff The pseudo post hoc tests will be conducted only if the term's
+#'   p value is below the cutoff.
+#' @param permutations Number of permutations
+#' @param seed Random seed, set just before the initial call to
+#'   \code{vegan::adonis()}
+#' @export
+adonis_posthoc <- function(data, distmat,
+                              formula_string,
+                              sample_id_var = SampleID,
+                              rep_meas_var = subject_id,
+                              group_var = study_group,
+                              p_cutoff = 0.05,
+                              permutations = 999,
+                              seed = 42) {
+
+  a_ixn <- adonis_run(data, distmat, formula_string, sample_id_var, rep_meas_var, permutations, seed) %>%
+    mutate(comparison = "all")
+
+  combs <- combn(as.character(unique( dplyr::pull(data, {{ group_var }}) )), 2)
+  num_tests <- ncol(combs)
+
+  if (filter(a_ixn, Term == rlang::as_name(rlang::ensym(group_var)) )$p.value < p_cutoff) {
+    for (i in 1:num_tests){
+      s_temp <- filter(s_toTest, group_var %in% combs[,i])
+      a_ixn <- rbind(a_ixn,
+                     adonis_run(s_temp, distmat, formula_string, sample_id_var, rep_meas_var, permutations, seed) %>%
+                       mutate(comparison = paste(combs[,i], collapse=' - '))
+      )
+    }
+  }
+  a_ixn
+}
