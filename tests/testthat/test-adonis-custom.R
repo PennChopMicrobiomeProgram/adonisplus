@@ -5,6 +5,14 @@ example_data <- tibble::tibble(
   SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
   study_group = rep(c("G1", "G2", "G1", "G2"), c(3, 2, 3, 3)))
 
+
+example_data2 <- tibble::tibble(
+  SampleID = c(
+    "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"),
+  time_point = c(rep("C", 5), rep("P", 6)),
+  SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
+  study_group = rep(c("G1", "G2", "G3", "G1", "G2", "G3"), c(2,2,1, 1, 2, 3)))
+
 example_dist <- structure(
   c(
     0.367, 0.495, 0.425, 0.432, 0.698, 0.812, 0.698, 0.605, 0.41, 0.522, 0.461,
@@ -38,5 +46,90 @@ test_that("adonis_repeated_measures produces expected result", {
     example_data, example_dist,
     group2 = time_point, rep_meas_var = SubjectID,
     permutations = 9)
+  expect_equal(observed, expected)
+})
+
+
+
+test_that("adonis_run produces expected result", {
+  expected <- tibble::tibble(
+    term = c(
+      "study_group", "Residuals", "Total"),
+    df = c(1, 9, 10),
+    sumsq = c(
+      0.1412367727273, 1.4724405000000, 1.6136772727273),
+    meansq = c(
+      0.1412367727273, 0.1636045000000, NA),
+    statistic = c(
+      0.8632817112443, NA, NA),
+    r.squared = c(
+      0.087524795146, 0.912475204854, 1),
+    p.value = c(0.73, NA, NA))
+  observed <- adonis_run(example_data, example_dist, "study_group", SampleID, NULL, 99, 42)
+  expect_equal(observed, expected)
+})
+
+
+test_that("adonis_run produces expected result using the strata term", {
+  expected <- tibble::tibble(
+    term = c(
+      "study_group", "Residuals", "Total"),
+    df = c(1, 9, 10),
+    sumsq = c(
+      0.1412367727273, 1.4724405000000, 1.6136772727273),
+    meansq = c(
+      0.1412367727273, 0.1636045000000, NA),
+    statistic = c(
+      0.8632817112443, NA, NA),
+    r.squared = c(
+      0.087524795146, 0.912475204854, 1),
+    p.value = c(0.61, NA, NA))
+  observed <- adonis_run(example_data, example_dist, "study_group", SampleID, time_point, 99, 42)
+  expect_equal(observed, expected)
+})
+
+
+
+test_that("adonis_posthoc produces expected result", {
+  expected <- tibble::tibble(
+    term = rep(c("study_group", "Residuals", "Total"), 4),
+    df = c(c(2, 8, 10), rep(c(1,5,6), 2), c(1,6,7)),
+    sumsq = c(0.322740606060606, 1.29093666666667, 1.61367727272727, 0.154497726190476, 
+              1.03401541666667, 1.18851314285714, 0.125784226190476, 0.621541916666667, 
+              0.747326142857143, 0.198521625, 0.926316, 1.124837625),
+    meansq = c(0.161370303030303, 0.161367083333333, NA, 0.154497726190476, 
+               0.206803083333333, NA, 0.125784226190476, 0.124308383333333, 
+               NA, 0.198521625, 0.154386, NA),
+    statistic = c(1.00001995262543, NA, NA, 0.747076512111044, NA, NA, 1.01187243223319, 
+                  NA, NA, 1.28587841514127, NA, NA),
+    r.squared = c(0.200003192407329, 0.799996807592671, 1, 0.129992442337717, 
+                  0.870007557662283, 1, 0.168312359192445, 0.831687640807555, 1, 
+                  0.17648913993253, 0.82351086006747, 1),
+    p.value = c(0.8, NA, NA, 1, NA, NA, 0.4, NA, NA, 0.3, NA, NA),
+    comparison = rep(c("all", "G1 - G2", "G1 - G3", "G2 - G3"), c(3,3,3,3)))
+  observed <- adonis_posthoc(example_data2, example_dist, "study_group", SampleID, NULL, study_group, 1, 9, 42)
+  expect_equal(observed, expected)
+})
+
+
+
+test_that("adonis_posthoc produces expected result with strata", {
+  expected <- tibble::tibble(
+    term = rep(c("study_group", "Residuals", "Total"), 4),
+    df = c(c(2, 8, 10), rep(c(1,5,6), 2), c(1,6,7)),
+    sumsq = c(0.322740606060606, 1.29093666666667, 1.61367727272727, 0.154497726190476, 
+              1.03401541666667, 1.18851314285714, 0.125784226190476, 0.621541916666667, 
+              0.747326142857143, 0.198521625, 0.926316, 1.124837625),
+    meansq = c(0.161370303030303, 0.161367083333333, NA, 0.154497726190476, 
+               0.206803083333333, NA, 0.125784226190476, 0.124308383333333, 
+               NA, 0.198521625, 0.154386, NA),
+    statistic = c(1.00001995262543, NA, NA, 0.747076512111044, NA, NA, 1.01187243223319, 
+                  NA, NA, 1.28587841514127, NA, NA),
+    r.squared = c(0.200003192407329, 0.799996807592671, 1, 0.129992442337717, 
+                  0.870007557662283, 1, 0.168312359192445, 0.831687640807555, 1, 
+                  0.17648913993253, 0.82351086006747, 1),
+    p.value = c(0.3, NA, NA, 0.9, NA, NA, 0.4, NA, NA, 0.1, NA, NA),
+    comparison = rep(c("all", "G1 - G2", "G1 - G3", "G2 - G3"), c(3,3,3,3)))
+  observed <- adonis_posthoc(example_data2, example_dist, "study_group", SampleID, time_point, study_group, 1, 9, 42)
   expect_equal(observed, expected)
 })
