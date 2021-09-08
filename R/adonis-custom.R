@@ -111,7 +111,7 @@ adonis_run <- function(data, distmat,
                        seed = 42) {
 
   sample_ids <- as.character(dplyr::pull(data, {{ sample_id_var }}))
-  
+
   strata_ids <- c()
   if (!rlang::quo_is_null(rlang::enquo(rep_meas_var))) {
     strata_ids <- as.character(dplyr::pull(data, {{ rep_meas_var }}))
@@ -126,9 +126,9 @@ adonis_run <- function(data, distmat,
 
   set.seed(seed)
   if(is.null(strata_ids)) {
-    tidy.adonis(adonis(adonis_formula, data=data, permutations=permutations))
+    tidy.adonis(vegan::adonis(adonis_formula, data=data, permutations=permutations))
   } else {
-    tidy.adonis(adonis(adonis_formula, data=data, permutations=permutations, strata=strata_ids))
+    tidy.adonis(vegan::adonis(adonis_formula, data=data, permutations=permutations, strata=strata_ids))
   }
 }
 
