@@ -24,3 +24,5 @@ Imports:
     usedist,
     dplyr (>= 1.0.0),
     tibble (>= 3.0.0)
+Depends:
+    R (>= 2.10)
