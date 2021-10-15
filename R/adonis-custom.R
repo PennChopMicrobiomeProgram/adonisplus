@@ -38,7 +38,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
     dplyr::pull({{ sample_id_var }}) %>%
     as.character()
   distmat <- usedist::dist_subset(distmat, sample_ids)
-  formula <- as.formula(formula)
+  formula <- stats::as.formula(formula)
   # TODO: determine if LHS is equal to "distmat ~" and stop if not
 
   set.seed(seed)
@@ -54,7 +54,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
     vars <- names(shuffle)
     # TODO: handle errors from missing variable names
     # Matrix of variables by terms
-    vars_by_terms <- attr(terms(formula), "factors")
+    vars_by_terms <- attr(stats::terms(formula), "factors")
     nterms <- length(colnames(vars_by_terms))
     # TODO: handle errors due to variable names not matching
     # Keep only the variables that we will shuffle manually
@@ -109,25 +109,21 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
 
   result_main <- adonisplus(data, ...) %>%
     dplyr::mutate(comparison = paste("All", var_name)) %>%
-    dplyr::select(term, comparison, everything()) %>%
+    dplyr::select(comparison, term, dplyr::everything()) %>%
     dplyr::filter(!(term %in% c("Residuals", "Total")))
-
-  if (result_main$p.value > alpha) {
-    return(result_main)
-  }
 
   var_levels <- data %>%
     dplyr::pull({{ which }}) %>%
     as.factor() %>%
     levels()
-  pairs <- combn(var_levels, 2, simplify = FALSE)
+  pairs <- utils::combn(var_levels, 2, simplify = FALSE)
 
   make_pairwise_comparison <- function (pair) {
     pair_data <- data %>%
       dplyr::filter({{ which }} %in% pair)
     adonisplus(pair_data, ...) %>%
         dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
-        dplyr::select(term, comparison, everything()) %>%
+        dplyr::select(comparison, term, dplyr::everything()) %>%
         dplyr::filter(!(term %in% c("Residuals", "Total")))
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) %>%
@@ -198,7 +194,7 @@ adonis_repeated_measures <- function(data, distmat,
     adonis_formula <- paste0(
       "distmat ~ ", covariates, " + ", group1_name, " * ", group2_name)
   }
-  adonis_formula <- as.formula(adonis_formula)
+  adonis_formula <- stats::as.formula(adonis_formula)
 
   set.seed(seed)
   a_observed <- vegan::adonis(adonis_formula, data=data, permutations=permutations)
@@ -257,7 +253,7 @@ adonis_run <- function(data, distmat,
   if (!grepl("~", formula_string)) {
     formula_string <- paste0("distmat ~ ", formula_string)
   }
-  adonis_formula <- as.formula(formula_string)
+  adonis_formula <- stats::as.formula(formula_string)
 
   distmat <- usedist::dist_subset(distmat, sample_ids)
 
@@ -301,7 +297,7 @@ adonis_posthoc <- function(data, distmat,
   a_ixn <- adonis_run(data, distmat, formula_string, {{sample_id_var}}, {{rep_meas_var}}, permutations, seed) %>%
     dplyr::mutate(comparison = "all")
 
-  combs <- combn(as.character(unique( dplyr::pull(data, {{ group_var }}) )), 2)
+  combs <- utils::combn(as.character(unique( dplyr::pull(data, {{ group_var }}) )), 2)
   num_tests <- ncol(combs)
 
   if (dplyr::filter(a_ixn, term == rlang::as_name(rlang::ensym(group_var)) )$p.value < p_cutoff) {

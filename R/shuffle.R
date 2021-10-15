@@ -6,7 +6,7 @@
 #'   shuffled within each group.
 #' @export
 shuffle_within_groups <- function (x, g) {
-  ave(x, g, FUN=sample)
+  stats::ave(x, g, FUN=sample)
 }
 
 #' Shuffle a vector, but swap whole groups

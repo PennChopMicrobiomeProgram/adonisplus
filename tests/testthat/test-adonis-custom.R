@@ -83,8 +83,8 @@ result_poshoc_unrestricted <- tibble::tibble(
   comparison = rep(c("all", "G1 - G2", "G1 - G3", "G2 - G3"), c(3,3,3,3)))
 
 result_adonispost_unrestricted <- tibble::tibble(
-  term = c("study_group", "study_group", "study_group", "study_group"),
   comparison = c("All study_group", "G1 - G2", "G1 - G3", "G2 - G3"),
+  term = c("study_group", "study_group", "study_group", "study_group"),
   df = c(2, 1, 1, 1),
   sumsq = c(
     0.396595356060606, 0.2534925, 0.172570726190476, 0.160944833333333),

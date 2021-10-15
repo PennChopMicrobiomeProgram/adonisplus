@@ -4,10 +4,12 @@
 \alias{tidy.adonis}
 \title{Tidy an \code{adonis} object}
 \usage{
-\method{tidy}{adonis}(x)
+\method{tidy}{adonis}(x, ...)
 }
 \arguments{
 \item{x}{an object returned from \code{vegan::adonis()}.}
+
+\item{...}{Additional arguments are not used.}
 }
 \value{
 A \code{tibble} with the following columns:
