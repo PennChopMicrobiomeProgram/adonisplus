@@ -1,26 +1,26 @@
 #' Permutational multivariate analysis of variance, plus
 #'
-#' @param data Data to use in the test
+#' @param data Data to use in the test.
 #' @param distmat Distance matrix, either a matrix or an object of class
 #'   \code{dist} The distance matrix will automatically be filtered and
-#'   re-arranged to match the rows of \code{data}
+#'   re-arranged to match the rows of \code{data}.
 #' @param formula Model formula. The LHS must be "distmat ~". The formula can
 #'   either be a literal formula or a string that can be converted into a
 #'   formula.
 #' @param sample_id_var Variable in \code{data} that defines the sample IDs,
-#'   i.e. the identifiers that correspond to each item in the distance matrix
+#'   i.e. the identifiers that correspond to each item in the distance matrix.
 #' @param rep_meas_var Variable in \code{data} that indicates the repeated
-#'   measures in the experiment, typically a subject ID or cage ID
+#'   measures in the experiment, typically a subject ID or cage ID.
 #' @param shuffle Named character vector that specifies how to carry out
 #'   restricted permutations for variables in \code{data}. Names should
 #'   correspond to variables in \code{data}. Values should be either
 #'   \code{"between"} or \code{"within"}, meaning that values should be
 #'   shuffled between or within levels of \code{rep_meas_var}. See Details for
-#'   more info
-#' @param permutations Number of permutations
+#'   more info.
+#' @param permutations Number of permutations.
 #' @param seed Random seed, set just before the initial call to
-#'   \code{vegan::adonis()}
-#' @return The results from \code{vegan::adonis()} in tidy format
+#'   \code{vegan::adonis()}.
+#' @return The results from \code{vegan::adonis()} in tidy format.
 #' @details
 #' A typical experimental design has subjects in a few groups sampled
 #' repeatedly over a few time points. If the variable denoting the group is
@@ -97,12 +97,12 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
 #' Post-hoc tests for permutational multivariate analysis of variance
 #'
-#' @param data Data to use in the test
-#' @param ... Additional arguments passed to \code{adonisplus()}
-#' @param which Variable on which to perform post-hoc comparisons
+#' @param data Data to use in the test.
+#' @param ... Additional arguments passed to \code{adonisplus()}.
+#' @param which Variable on which to perform post-hoc comparisons.
 #' @param alpha The threshold for rejecting the null hypothesis in the main
-#'   comparison
-#' @return The results in tidy format
+#'   comparison.
+#' @return The results in tidy format.
 #' @export
 adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
   var_name <- rlang::as_name(rlang::ensym(which))

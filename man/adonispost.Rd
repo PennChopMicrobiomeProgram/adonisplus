@@ -7,17 +7,17 @@
 adonispost(data, ..., which = study_group, alpha = 0.05)
 }
 \arguments{
-\item{data}{Data to use in the test}
+\item{data}{Data to use in the test.}
 
-\item{...}{Additional arguments passed to \code{adonisplus()}}
+\item{...}{Additional arguments passed to \code{adonisplus()}.}
 
-\item{which}{Variable on which to perform post-hoc comparisons}
+\item{which}{Variable on which to perform post-hoc comparisons.}
 
 \item{alpha}{The threshold for rejecting the null hypothesis in the main
-comparison}
+comparison.}
 }
 \value{
-The results in tidy format
+The results in tidy format.
 }
 \description{
 Post-hoc tests for permutational multivariate analysis of variance

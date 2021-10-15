@@ -16,36 +16,36 @@ adonisplus(
 )
 }
 \arguments{
-\item{data}{Data to use in the test}
+\item{data}{Data to use in the test.}
 
 \item{distmat}{Distance matrix, either a matrix or an object of class
 \code{dist} The distance matrix will automatically be filtered and
-re-arranged to match the rows of \code{data}}
+re-arranged to match the rows of \code{data}.}
 
 \item{formula}{Model formula. The LHS must be "distmat ~". The formula can
 either be a literal formula or a string that can be converted into a
 formula.}
 
 \item{sample_id_var}{Variable in \code{data} that defines the sample IDs,
-i.e. the identifiers that correspond to each item in the distance matrix}
+i.e. the identifiers that correspond to each item in the distance matrix.}
 
 \item{rep_meas_var}{Variable in \code{data} that indicates the repeated
-measures in the experiment, typically a subject ID or cage ID}
+measures in the experiment, typically a subject ID or cage ID.}
 
 \item{shuffle}{Named character vector that specifies how to carry out
 restricted permutations for variables in \code{data}. Names should
 correspond to variables in \code{data}. Values should be either
 \code{"between"} or \code{"within"}, meaning that values should be
 shuffled between or within levels of \code{rep_meas_var}. See Details for
-more info}
+more info.}
 
-\item{permutations}{Number of permutations}
+\item{permutations}{Number of permutations.}
 
 \item{seed}{Random seed, set just before the initial call to
-\code{vegan::adonis()}}
+\code{vegan::adonis()}.}
 }
 \value{
-The results from \code{vegan::adonis()} in tidy format
+The results from \code{vegan::adonis()} in tidy format.
 }
 \description{
 Permutational multivariate analysis of variance, plus
