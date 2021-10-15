@@ -1,4 +1,4 @@
-#' Principal coordinates analysis
+#' Principal coordinates analysis, plus
 #'
 #' @param data A data frame giving information on the objects for the PCoA.
 #' @param distmat A matrix or \code{dist} object giving the distances between
