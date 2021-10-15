@@ -181,7 +181,7 @@ farmm_preabx %>%
 
 If you run this function yourself, you'll notice that it takes a lot longer
 than it takes to run `adonis()`. As we randomly re-assign diets and time
-points, we re-run the adonis function once for each re-assignment or
+points, we re-run the `adonis()` function once for each re-assignment or
 permutation. In fact, the `adonis()` function has some built-in capability to
 carry out restricted permutations, but because the built-in methods permute the
 samples and not the study groups, the between-subject permutations don't work
@@ -191,9 +191,9 @@ our data set would not work with the built-in permutation methods in
 permutations are named `shuffle_within_groups()` and
 `shuffle_between_groups()`, if you want to use them elsewhere.
 
-Having found a difference overall, we wish to know which diets are different.
-As before, we use `adonispost()` and tell it to run pairwise comparisons of
-diet by setting `which = diet`.
+Having found a difference between the diets overall, we wish to know which
+diet pairs are different. As before, we use `adonispost()` and tell it to run
+pairwise comparisons of diet by setting `which = diet`.
 
 ```{r}
 farmm_preabx %>%
