@@ -5,6 +5,7 @@ generics::tidy
 #' Tidy an \code{adonis} object
 #'
 #' @param x an object returned from \code{vegan::adonis()}.
+#' @param ... Additional arguments are not used.
 #' @return A \code{tibble} with the following columns:
 #'   \item{term}{The name of the regression term.}
 #'   \item{df}{Degrees of freedom used by the model.}
@@ -18,7 +19,7 @@ generics::tidy
 #'     R-squared statistic, or the percent of variation explained by the model.}
 #'   \item{p.value}{P-value from the permutation test.}
 #' @export
-tidy.adonis <- function (x) {
+tidy.adonis <- function (x, ...) {
   ret <- tibble::as_tibble(x$aov.tab, rownames = "term")
   colnames(ret) <- c(
     "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value")

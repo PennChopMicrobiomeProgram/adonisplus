@@ -23,4 +23,12 @@ Imports:
     vegan,
     usedist,
     dplyr (>= 1.0.0),
-    tibble (>= 3.0.0)
+    tibble (>= 3.0.0),
+    ape,
+    magrittr,
+    ggplot2,
+    stringr
+Depends:
+    R (>= 2.10)
+Suggests:
+    testthat
