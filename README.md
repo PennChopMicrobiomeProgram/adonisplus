@@ -116,7 +116,7 @@ color scale and change the theme.
 ``` r
 farmm_final %>%
   pcoaplus(distmat = farmm_bc, sample_id_var = sample_id) %>%
-  plot(mapping = aes(x = Axis.1, y = Axis.2, color = diet)) +
+  plot(color = diet) +
   scale_color_brewer(palette = "Set1") +
   theme_bw()
 ```
@@ -188,7 +188,7 @@ from the paper.
 ``` r
 farmm_samples %>%
   pcoaplus(distmat = farmm_bc, sample_id_var = "sample_id") %>%
-  plot(aes(x = Axis.1, y = Axis.2, color = study_day)) +
+  plot(color = study_day) +
   facet_grid(~ diet) +
   scale_color_viridis_c(direction = -1) +
   theme_bw()
@@ -239,15 +239,10 @@ farmm_preabx %>%
 If you run this function yourself, you’ll notice that it takes a lot
 longer than it takes to run `adonis()`. As we randomly re-assign diets
 and time points, we re-run the `adonis()` function once for each
-re-assignment or permutation. In fact, the `adonis()` function has some
-built-in capability to carry out restricted permutations, but because
-the built-in methods permute the samples and not the study groups, the
-between-subject permutations don’t work if you don’t have exactly the
-same number of samples per subject. Consequently, our data set would not
-work with the built-in permutation methods in `adonis()`. The functions
-used by `adonisplus()` to carry out the restricted permutations are
-named `shuffle_within_groups()` and `shuffle_between_groups()`, if you
-want to use them elsewhere.
+re-assignment or permutation.[1] The functions used by `adonisplus()` to
+carry out the restricted permutations are named
+`shuffle_within_groups()` and `shuffle_between_groups()`, if you want to
+use them elsewhere.
 
 Having found a difference between the diets overall, we wish to know
 which diet pairs are different. As before, we use `adonispost()` and
@@ -287,3 +282,10 @@ Notice that, for all the comparisons above, we’ve been able to use the
 same distance matrix, `farmm_bc`. Each time we called a function using
 the distances, the distance matrix was automatically filtered and
 re-arranged to match the samples in our data frame. How convenient!
+
+[1] In fact, the `adonis()` function has some built-in capability to
+carry out restricted permutations, but because the built-in methods
+permute the samples and not the study groups, the between-subject
+permutations don’t work if you don’t have exactly the same number of
+samples per subject. Consequently, our data set would not work with the
+built-in permutation methods in `adonis()`.
