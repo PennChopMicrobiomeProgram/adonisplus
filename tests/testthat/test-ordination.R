@@ -33,8 +33,14 @@ expected_axes <- tibble::tibble(
     0.0726191880827978, -0.148599519606932, -0.30153337102521,
     0.0100963735032305, 0.236709673732038, 0.169041261896952,
     -0.0652297761452144, 0.0515510886449863))
-expected_pctvar <- c(32.4014704674688, 23.8948365133504, 13.9227882293832)
-names(expected_pctvar) <- c("Axis.1", "Axis.2", "Axis.3")
+
+expected_pctvar <- structure(
+  c(32.4014704674688, 23.8948365133504, 13.9227882293832),
+  names = c("Axis.1", "Axis.2", "Axis.3"))
+
+expected_axislabel <- structure(
+  c("PCoA axis 1 (32%)", "PCoA axis 2 (24%)", "PCoA axis 3 (14%)"),
+  names = c("Axis.1", "Axis.2", "Axis.3"))
 
 test_that("pcoaplus works with default arguments", {
   obs <- pcoaplus(example_data, example_dist)
@@ -43,10 +49,12 @@ test_that("pcoaplus works with default arguments", {
   expect_equal(obs$Axis.1, expected_axes$Axis.1)
   expect_equal(obs$Axis.2, expected_axes$Axis.2)
   expect_equal(attr(obs, "pctvar"), expected_pctvar[1:2])
+  expect_equal(attr(obs, "axislabel"), expected_axislabel[1:2])
 })
 
 test_that("pcoaplus works with more than two axes", {
   obs <- pcoaplus(example_data, example_dist, num_axes = 3)
   expect_equal(obs$Axis.3, expected_axes$Axis.3)
   expect_equal(attr(obs, "pctvar"), expected_pctvar[1:3])
+  expect_equal(attr(obs, "axislabel"), expected_axislabel[1:3])
 })

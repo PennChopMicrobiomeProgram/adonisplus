@@ -9,13 +9,13 @@
 #'   for each row, used to find the matching distances in \code{distmat}.
 #' @param num_axes The number of PCoA axes to return in the output.
 #' @param x A tibble returned by \code{pcoaplus}.
-#' @param mapping An aesthetic mapping to use for the plot.
-#' @param ... Additional arguments are not used.
+#' @param ... Additional aesthetic mappings for ggplot.
 #' @return For \code{pcoaplus}, a tibble with new columns giving the position
 #'   of each object along the principal coordinate axes. We add an additional
 #'   class to the resultant tibble (\code{"pcoaplus"}) to facilitate plotting.
-#'   The tibble also contains an attribute, "pctvar", which gives the percent
-#'   variation explained by each principal coordinate axis.
+#'   The attribute "pctvar" gives the percent variation explained by each
+#'   principal coordinate axis. The attribute "axislabel" contains formatted
+#'   axis labels for plotting.
 #'
 #'   For \code{plot.pcoaplus}, a ggplot object.
 #' @export
@@ -44,48 +44,22 @@ pcoaplus <- function (data, distmat, sample_id_var = SampleID, num_axes = 2) {
   names(pctvar) <- axis_names
   attr(pcoa_df, "pctvar") <- pctvar
 
+  axislabel <- stringr::str_glue("PCoA axis {axis_numbers} ({round(pctvar)}%)")
+  names(axislabel) <- axis_names
+  attr(pcoa_df, "axislabel") <- axislabel
+
   class(pcoa_df) <- c("pcoaplus", class(pcoa_df))
   pcoa_df
-}
-
-get_pcoa_axis <- function (qexp) {
-  val <- as.character(rlang::get_expr(qexp))
-  if (length(val) != 1) {
-    # Give up if we have something more complicated than a single value
-    return(NA_integer_)
-  }
-  m <- stringr::str_match(val, "^Axis\\.(\\d+)$")
-  axis_match <- m[1, 2]
-  # Will be NA if no match is found
-  as.integer(axis_match)
 }
 
 
 #' @describeIn pcoaplus Make a principal coordinates scatter plot
 #' @export
-plot.pcoaplus <- function (x,
-                           mapping = ggplot2::aes(x = Axis.1, y = Axis.2),
-                           ...) {
-  p <- x %>%
+plot.pcoaplus <- function (x, ...) {
+  x %>%
     ggplot2::ggplot() +
-    ggplot2::geom_point(mapping) +
-    ggplot2::coord_equal()
-
-  pctvar <- attr(x, "pctvar")
-
-  x_axis_num <- get_pcoa_axis(mapping$x)
-  if (!is.na(x_axis_num)) {
-    x_pctvar <- round(pctvar[x_axis_num])
-    x_label <- stringr::str_glue("PCoA axis {x_axis_num} ({x_pctvar}%)")
-    p <- p + ggplot2::xlab(x_label)
-  }
-
-  y_axis_num <- get_pcoa_axis(mapping$y)
-  if (!is.na(y_axis_num)) {
-    y_pctvar <- round(pctvar[y_axis_num])
-    y_label <- stringr::str_glue("PCoA axis {y_axis_num} ({y_pctvar}%)")
-    p <- p + ggplot2::ylab(y_label)
-  }
-
-  p
+    ggplot2::geom_point(ggplot2::aes(x = Axis.1, y = Axis.2, ...)) +
+    ggplot2::coord_equal() +
+    ggplot2::xlab(attr(x, "axislabel")[1]) +
+    ggplot2::ylab(attr(x, "axislabel")[2])
 }
