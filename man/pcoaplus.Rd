@@ -7,7 +7,7 @@
 \usage{
 pcoaplus(data, distmat, sample_id_var = SampleID, num_axes = 2)
 
-\method{plot}{pcoaplus}(x, mapping = ggplot2::aes(x = Axis.1, y = Axis.2), ...)
+\method{plot}{pcoaplus}(x, ...)
 }
 \arguments{
 \item{data}{A data frame giving information on the objects for the PCoA.}
@@ -24,16 +24,15 @@ for each row, used to find the matching distances in \code{distmat}.}
 
 \item{x}{A tibble returned by \code{pcoaplus}.}
 
-\item{mapping}{An aesthetic mapping to use for the plot.}
-
-\item{...}{Additional arguments are not used.}
+\item{...}{Additional aesthetic mappings for ggplot.}
 }
 \value{
 For \code{pcoaplus}, a tibble with new columns giving the position
   of each object along the principal coordinate axes. We add an additional
   class to the resultant tibble (\code{"pcoaplus"}) to facilitate plotting.
-  The tibble also contains an attribute, "pctvar", which gives the percent
-  variation explained by each principal coordinate axis.
+  The attribute "pctvar" gives the percent variation explained by each
+  principal coordinate axis. The attribute "axislabel" contains formatted
+  axis labels for plotting.
 
   For \code{plot.pcoaplus}, a ggplot object.
 }
