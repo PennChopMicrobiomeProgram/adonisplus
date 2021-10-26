@@ -91,7 +91,7 @@ default mapping to color the samples by diet. We also add a few elements to the
 ```{r farmm_final_pcoa}
 farmm_final %>%
   pcoaplus(distmat = farmm_bc, sample_id_var = sample_id) %>%
-  plot(mapping = aes(x = Axis.1, y = Axis.2, color = diet)) +
+  plot(color = diet) +
   scale_color_brewer(palette = "Set1") +
   theme_bw()
 ```
@@ -144,7 +144,7 @@ paper.
 ```{r farmm_pcoa}
 farmm_samples %>%
   pcoaplus(distmat = farmm_bc, sample_id_var = "sample_id") %>%
-  plot(aes(x = Axis.1, y = Axis.2, color = study_day)) +
+  plot(color = study_day) +
   facet_grid(~ diet) +
   scale_color_viridis_c(direction = -1) +
   theme_bw()
@@ -182,12 +182,12 @@ farmm_preabx %>%
 If you run this function yourself, you'll notice that it takes a lot longer
 than it takes to run `adonis()`. As we randomly re-assign diets and time
 points, we re-run the `adonis()` function once for each re-assignment or
-permutation. In fact, the `adonis()` function has some built-in capability to
+permutation.^[In fact, the `adonis()` function has some built-in capability to
 carry out restricted permutations, but because the built-in methods permute the
 samples and not the study groups, the between-subject permutations don't work
 if you don't have exactly the same number of samples per subject. Consequently,
 our data set would not work with the built-in permutation methods in
-`adonis()`. The functions used by `adonisplus()` to carry out the restricted
+`adonis()`.] The functions used by `adonisplus()` to carry out the restricted
 permutations are named `shuffle_within_groups()` and
 `shuffle_between_groups()`, if you want to use them elsewhere.
 
