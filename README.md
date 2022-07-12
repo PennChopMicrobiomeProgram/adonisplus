@@ -3,6 +3,11 @@
 
 # adonisplus
 
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/workflows/R-CMD-check/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions)
+  [![Codecov test coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus?branch=master)
+<!-- badges: end -->
+
 The `adonisplus` package provides some utilities for permutational
 multivariate analysis of variance, also known as adonis or PERMANOVA.
 
