@@ -41,6 +41,12 @@ test_that("adonispost works", {
   expect_equal(observed, expected)
 })
 
+test_that("distmat variable not altered in global environment", {
+  assign("distmat", "whaaat", .GlobalEnv)
+  adonisplus(example_data, example_dist, distmat ~ study_group)
+  expect_equal(.GlobalEnv[["distmat"]], "whaaat")
+})
+
 test_that("adonisplus works for one group with unrestricted permutations", {
   observed <- adonisplus(example_data, example_dist, distmat ~ study_group)
   expected <- tibble::tibble(
