@@ -26,3 +26,28 @@ tidy.adonis <- function (x, ...) {
   attr(ret, "heading") <- NULL
   ret
 }
+
+#' Tidy an \code{anova.cca} object
+#'
+#' @param x an object returned from \code{vegan::adonis2()}.
+#' @param ... Additional arguments are not used.
+#' @return A \code{tibble} with the following columns:
+#'   \item{term}{The name of the regression term.}
+#'   \item{df}{Degrees of freedom used by the model.}
+#'   \item{sumsq}{Sum of squares explained by this term.}
+#'   \item{r.squared}{
+#'     R-squared statistic, or the percent of variation explained by the model.}
+#'   \item{statistic}{
+#'     The value of a pseudo-F-statistic to use in the permutation test.}
+#'   \item{p.value}{P-value from the permutation test.}
+#' @export
+tidy.anova.cca <- function (x, ...) {
+  ret <- tibble::as_tibble(x, rownames = "term")
+  colnames(ret) <- c(
+    "term", "df", "sumsq", "r.squared", "statistic", "p.value")
+  attr(ret, "Random.seed") <- NULL
+  attr(ret, "F.perm") <- NULL
+  attr(ret, "control") <- NULL
+  attr(ret, "heading") <- NULL
+  ret
+}

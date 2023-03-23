@@ -20,3 +20,23 @@ test_that("tidy.adonis produces expected result", {
     p.value = c(0.635, NA, NA))
   expect_equal(tidy(adonis_res), expected)
 })
+
+adonis2_res <- data.frame(
+  Df = c(1, 9, 10),
+  SumOfSqs = c(0.141236772727273, 1.4724405, 1.61367727272727),
+  R2 = c(0.0875247951460386, 0.912475204853961, 1),
+  F = c(0.863281711244329, NA, NA),
+  `Pr(>F)` = c(0.643, NA, NA),
+  row.names = c("study_group", "Residual", "Total"))
+class(adonis2_res) <- c("anova.cca", "anova", "data.frame")
+
+test_that("tidy.anova.cca produces expected result", {
+  expected <- tibble::tibble(
+    term = c("study_group", "Residual", "Total"),
+    df = c(1, 9, 10),
+    sumsq = c(0.141236772727273, 1.4724405, 1.61367727272727),
+    r.squared = c(0.0875247951460386, 0.912475204853961, 1),
+    statistic = c(0.863281711244329, NA, NA),
+    p.value = c(0.643, NA, NA))
+  expect_equal(tidy(adonis2_res), expected)
+})
