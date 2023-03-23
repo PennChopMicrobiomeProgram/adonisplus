@@ -41,10 +41,12 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
   formula <- stats::as.formula(formula)
   # TODO: determine if LHS is equal to "distmat ~" and stop if not
 
+  assign("distmat", distmat, .GlobalEnv)
+
   set.seed(seed)
-  a_observed <- vegan::adonis(
+  a_observed <- vegan::adonis2(
     formula = formula, data = data, permutations = permutations)
-  result <- tidy.adonis(a_observed)
+  result <- tidy.anova.cca(a_observed)
 
   if (!is.null(shuffle)) {
     rep_meas_vals <- data %>%
@@ -78,8 +80,8 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         new_vals <- fcn(old_vals, rep_meas_vals)
         trial_data[[var]] <- new_vals
       }
-      trial_a <- vegan::adonis(formula, trial_data, permutations = 4)
-      trial_result <- tidy.adonis(trial_a)
+      trial_a <- vegan::adonis2(formula, trial_data, permutations = 4)
+      trial_result <- tidy.anova.cca(trial_a)
       trial_result$statistic[term_idx]
     })
 
@@ -110,7 +112,7 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
   result_main <- adonisplus(data, ...) %>%
     dplyr::mutate(comparison = paste("All", var_name)) %>%
     dplyr::select(comparison, term, dplyr::everything()) %>%
-    dplyr::filter(!(term %in% c("Residuals", "Total")))
+    dplyr::filter(!(term %in% c("Residual", "Total")))
 
   var_levels <- data %>%
     dplyr::pull({{ which }}) %>%
@@ -124,7 +126,7 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
     adonisplus(pair_data, ...) %>%
         dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
         dplyr::select(comparison, term, dplyr::everything()) %>%
-        dplyr::filter(!(term %in% c("Residuals", "Total")))
+        dplyr::filter(!(term %in% c("Residual", "Total")))
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) %>%
     dplyr::bind_rows()
