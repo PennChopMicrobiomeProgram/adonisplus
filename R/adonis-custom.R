@@ -40,10 +40,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
   distmat <- usedist::dist_subset(distmat, sample_ids)
   formula <- stats::as.formula(formula)
   # TODO: determine if LHS is equal to "distmat ~" and stop if not
-
-  old_distmat_val <- .GlobalEnv[["distmat"]]
-  assign("distmat", distmat, .GlobalEnv)
-  on.exit(assign("distmat", old_distmat_val, .GlobalEnv))
+  assign("distmat", distmat, environment(formula))
 
   set.seed(seed)
   a_observed <- vegan::adonis2(
