@@ -41,6 +41,6 @@ Principal coordinates analysis, plus
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{plot}: Make a principal coordinates scatter plot
-}}
+\item \code{plot(pcoaplus)}: Make a principal coordinates scatter plot
 
+}}

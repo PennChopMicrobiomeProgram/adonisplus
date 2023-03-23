@@ -2,12 +2,12 @@
 % Please edit documentation in R/tidy.R
 \name{tidy.anova.cca}
 \alias{tidy.anova.cca}
-\title{Tidy an \code{anova.cca} object produced by \code{adonis2}}
+\title{Tidy an \code{anova.cca} object}
 \usage{
 \method{tidy}{anova.cca}(x, ...)
 }
 \arguments{
-\item{x}{an object returned from \code{vegan::adonis()}.}
+\item{x}{an object returned from \code{vegan::adonis2()}.}
 
 \item{...}{Additional arguments are not used.}
 }
@@ -23,5 +23,5 @@ A \code{tibble} with the following columns:
   \item{p.value}{P-value from the permutation test.}
 }
 \description{
-Tidy an \code{anova.cca} object produced by \code{adonis2}
+Tidy an \code{anova.cca} object
 }
