@@ -53,6 +53,12 @@ test_that("adonisplus works for one group with unrestricted permutations", {
   expect_equal(observed, expected)
 })
 
+test_that("adonisplus fails if LHS is not 'distmat'", {
+  expect_error(
+    adonisplus(example_data, example_dist, example_dist ~ study_group),
+    regexp = "LHS of formula")
+})
+
 test_that("adonisplus works for one group with restricted permutations", {
   observed <- adonisplus(
     example_data, example_dist, distmat ~ study_group,
