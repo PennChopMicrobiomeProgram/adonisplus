@@ -39,12 +39,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
     as.character()
   distmat <- usedist::dist_subset(distmat, sample_ids)
   formula <- stats::as.formula(formula)
-  formula_lhs_name <- all.names(formula)[2]
-  if (!(formula_lhs_name %in% "distmat")) {
-    stop(
-      "LHS of formula must be exactly 'distmat'. Saw '",
-      formula_lhs_name, "'.")
-  }
+  check_lhs(formula, distmat ~ .)
   assign("distmat", distmat, environment(formula))
 
   set.seed(seed)
