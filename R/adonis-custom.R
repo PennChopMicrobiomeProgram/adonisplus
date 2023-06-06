@@ -4,9 +4,9 @@
 #' @param distmat Distance matrix, either a matrix or an object of class
 #'   \code{dist} The distance matrix will automatically be filtered and
 #'   re-arranged to match the rows of \code{data}.
-#' @param formula Model formula. The LHS must be "distmat ~". The formula can
-#'   either be a literal formula or a string that can be converted into a
-#'   formula.
+#' @param formula Model formula. The LHS (the part to the left of the tilde)
+#'   must be "distmat". The formula can either be a literal formula or a string
+#'   that can be converted into a formula.
 #' @param sample_id_var Variable in \code{data} that defines the sample IDs,
 #'   i.e. the identifiers that correspond to each item in the distance matrix.
 #' @param rep_meas_var Variable in \code{data} that indicates the repeated
@@ -39,7 +39,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
     as.character()
   distmat <- usedist::dist_subset(distmat, sample_ids)
   formula <- stats::as.formula(formula)
-  # TODO: determine if LHS is equal to "distmat ~" and stop if not
+  check_lhs(formula, distmat ~ .)
   assign("distmat", distmat, environment(formula))
 
   set.seed(seed)

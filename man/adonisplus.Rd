@@ -22,9 +22,9 @@ adonisplus(
 \code{dist} The distance matrix will automatically be filtered and
 re-arranged to match the rows of \code{data}.}
 
-\item{formula}{Model formula. The LHS must be "distmat ~". The formula can
-either be a literal formula or a string that can be converted into a
-formula.}
+\item{formula}{Model formula. The LHS (the part to the left of the tilde)
+must be "distmat". The formula can either be a literal formula or a string
+that can be converted into a formula.}
 
 \item{sample_id_var}{Variable in \code{data} that defines the sample IDs,
 i.e. the identifiers that correspond to each item in the distance matrix.}
