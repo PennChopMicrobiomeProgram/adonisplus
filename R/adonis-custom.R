@@ -44,7 +44,8 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
   set.seed(seed)
   a_observed <- vegan::adonis2(
-    formula = formula, data = data, permutations = permutations)
+    formula = formula, data = data, permutations = permutations
+  )
   result <- tidy.anova.cca(a_observed)
 
   if (!is.null(shuffle)) {
@@ -71,7 +72,8 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         method <- shuffle[var]
         shuffle_functions <- list(
           between = shuffle_between_groups,
-          within = shuffle_within_groups)
+          within = shuffle_within_groups
+        )
         # Use match.arg in case someone writes "bet" instead of "between"
         method <- match.arg(method, names(shuffle_functions))
         fcn <- shuffle_functions[[method]]
@@ -86,7 +88,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
     if (nterms > 1) {
       fs_greater <- sweep(cbind(f_observed, fs_permuted), 1, f_observed, `>=`)
-      p_permuted <- apply(fs_greater, 1, function (x) sum(x) / length(x))
+      p_permuted <- apply(fs_greater, 1, function(x) sum(x) / length(x))
     } else {
       fs_greater <- c(f_observed, fs_permuted) >= f_observed
       p_permuted <- sum(fs_greater) / length(fs_greater)
@@ -119,13 +121,13 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
     levels()
   pairs <- utils::combn(var_levels, 2, simplify = FALSE)
 
-  make_pairwise_comparison <- function (pair) {
+  make_pairwise_comparison <- function(pair) {
     pair_data <- data %>%
       dplyr::filter({{ which }} %in% pair)
     adonisplus(pair_data, ...) %>%
-        dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
-        dplyr::select(comparison, term, dplyr::everything()) %>%
-        dplyr::filter(!(term %in% c("Residual", "Total")))
+      dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
+      dplyr::select(comparison, term, dplyr::everything()) %>%
+      dplyr::filter(!(term %in% c("Residual", "Total")))
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) %>%
     dplyr::bind_rows()

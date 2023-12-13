@@ -6,7 +6,9 @@ adonis_res <- list(
     F.Model = c(0.863281711244329, NA, NA),
     R2 = c(0.0875247951460386, 0.912475204853961, 1),
     `Pr(>F)` = c(0.635, NA, NA),
-    row.names = c("study_group", "Residuals", "Total")))
+    row.names = c("study_group", "Residuals", "Total")
+  )
+)
 class(adonis_res) <- "adonis"
 
 test_that("tidy.adonis produces expected result", {
@@ -17,7 +19,8 @@ test_that("tidy.adonis produces expected result", {
     meansq = c(0.141236772727273, 0.1636045, NA),
     statistic = c(0.863281711244329, NA, NA),
     r.squared = c(0.0875247951460386, 0.912475204853961, 1),
-    p.value = c(0.635, NA, NA))
+    p.value = c(0.635, NA, NA)
+  )
   expect_equal(tidy(adonis_res), expected)
 })
 
@@ -27,7 +30,8 @@ adonis2_res <- data.frame(
   R2 = c(0.0875247951460386, 0.912475204853961, 1),
   F = c(0.863281711244329, NA, NA),
   `Pr(>F)` = c(0.643, NA, NA),
-  row.names = c("study_group", "Residual", "Total"))
+  row.names = c("study_group", "Residual", "Total")
+)
 class(adonis2_res) <- c("anova.cca", "anova", "data.frame")
 
 test_that("tidy.anova.cca produces expected result", {
@@ -37,6 +41,7 @@ test_that("tidy.anova.cca produces expected result", {
     sumsq = c(0.141236772727273, 1.4724405, 1.61367727272727),
     r.squared = c(0.0875247951460386, 0.912475204853961, 1),
     statistic = c(0.863281711244329, NA, NA),
-    p.value = c(0.643, NA, NA))
+    p.value = c(0.643, NA, NA)
+  )
   expect_equal(tidy(adonis2_res), expected)
 })
