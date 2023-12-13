@@ -2,6 +2,7 @@
 
 S3method(plot,pcoaplus)
 S3method(tidy,adonis)
+S3method(tidy,anova.cca)
 export("%>%")
 export(adonisplus)
 export(adonispost)

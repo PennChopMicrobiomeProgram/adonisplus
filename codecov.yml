@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 comment: false
 
 coverage:
@@ -12,3 +13,19 @@ coverage:
         target: auto
         threshold: 1%
         informational: true
+=======
+comment: false
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+    patch:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+>>>>>>> origin/main

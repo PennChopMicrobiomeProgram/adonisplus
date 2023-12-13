@@ -5,8 +5,8 @@
 #' @return A version of x where elements have been
 #'   shuffled within each group.
 #' @export
-shuffle_within_groups <- function (x, g) {
-  stats::ave(x, g, FUN=sample)
+shuffle_within_groups <- function(x, g) {
+  stats::ave(x, g, FUN = sample)
 }
 
 #' Shuffle a vector, but swap whole groups
@@ -15,11 +15,11 @@ shuffle_within_groups <- function (x, g) {
 #' @return A version of x where elements have been
 #'   shuffled with each group.
 #' @export
-shuffle_between_groups <- function (x, g) {
+shuffle_between_groups <- function(x, g) {
   g <- as.factor(g)
   x <- as.factor(x)
   # What is the value of x for every unique value of g?
-  x_vals_per_g <- tapply(x, g, unique, simplify=F)
+  x_vals_per_g <- tapply(x, g, unique, simplify = F)
   # Check that x has one unique value for each value of g. If not, raise an
   # error with an informative message.
   if (!all(sapply(x_vals_per_g, length) == 1)) {
@@ -27,7 +27,8 @@ shuffle_between_groups <- function (x, g) {
       "Multiple values detected within grouping factor.\n\n",
       "  Value of g: value(s) of x\n",
       "  -----------------------\n",
-      paste0("  ", names(x_vals_per_g), ": ", x_vals_per_g, collapse="\n"))
+      paste0("  ", names(x_vals_per_g), ": ", x_vals_per_g, collapse = "\n")
+    )
   }
   # Values of x for each value of g.
   x_per_g <- unlist(x_vals_per_g)
