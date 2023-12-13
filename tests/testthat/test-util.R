@@ -5,7 +5,8 @@ test_that("check_lhs has no error if LHS matches", {
 test_that("check_lhs produces error if LHS does not match", {
   expect_error(
     check_lhs(my_dist ~ study_group * study_day, distmat ~ .),
-    "LHS of formula must be")
+    "LHS of formula must be"
+  )
 })
 
 test_that("check_lhs works for multi-part LHS", {

@@ -19,10 +19,11 @@ generics::tidy
 #'     R-squared statistic, or the percent of variation explained by the model.}
 #'   \item{p.value}{P-value from the permutation test.}
 #' @export
-tidy.adonis <- function (x, ...) {
+tidy.adonis <- function(x, ...) {
   ret <- tibble::as_tibble(x$aov.tab, rownames = "term")
   colnames(ret) <- c(
-    "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value")
+    "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value"
+  )
   attr(ret, "heading") <- NULL
   ret
 }
@@ -41,10 +42,11 @@ tidy.adonis <- function (x, ...) {
 #'     The value of a pseudo-F-statistic to use in the permutation test.}
 #'   \item{p.value}{P-value from the permutation test.}
 #' @export
-tidy.anova.cca <- function (x, ...) {
+tidy.anova.cca <- function(x, ...) {
   ret <- tibble::as_tibble(x, rownames = "term")
   colnames(ret) <- c(
-    "term", "df", "sumsq", "r.squared", "statistic", "p.value")
+    "term", "df", "sumsq", "r.squared", "statistic", "p.value"
+  )
   attr(ret, "Random.seed") <- NULL
   attr(ret, "F.perm") <- NULL
   attr(ret, "control") <- NULL
