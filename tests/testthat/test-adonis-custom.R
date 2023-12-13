@@ -22,14 +22,8 @@ example_dist <- structure(
 )
 
 test_that("adonispost works", {
-  example_data_3groups <- tibble::tibble(
-    SampleID = c(
-      "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"
-    ),
-    time_point = c(rep("C", 5), rep("P", 6)),
-    SubjectID = paste0("S", c(1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6)),
-    study_group = rep(c("G1", "G2", "G3", "G1", "G2", "G3"), c(2, 2, 1, 2, 2, 2))
-  )
+  example_data_3groups <- example_data %>%
+    dplyr::mutate(study_group = rep(c("G1", "G2", "G3", "G1", "G2", "G3"), c(2, 2, 1, 2, 2, 2)))
   observed <- adonispost(
     example_data_3groups, example_dist, distmat ~ study_group,
     which = study_group
