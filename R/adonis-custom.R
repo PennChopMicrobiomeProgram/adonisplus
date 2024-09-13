@@ -4,9 +4,9 @@
 #' @param distmat Distance matrix, either a matrix or an object of class
 #'   \code{dist} The distance matrix will automatically be filtered and
 #'   re-arranged to match the rows of \code{data}.
-#' @param formula Model formula. The LHS must be "distmat ~". The formula can
-#'   either be a literal formula or a string that can be converted into a
-#'   formula.
+#' @param formula Model formula. The LHS (the part to the left of the tilde)
+#'   must be "distmat". The formula can either be a literal formula or a string
+#'   that can be converted into a formula.
 #' @param sample_id_var Variable in \code{data} that defines the sample IDs,
 #'   i.e. the identifiers that correspond to each item in the distance matrix.
 #' @param rep_meas_var Variable in \code{data} that indicates the repeated
@@ -39,12 +39,14 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
     as.character()
   distmat <- usedist::dist_subset(distmat, sample_ids)
   formula <- stats::as.formula(formula)
-  # TODO: determine if LHS is equal to "distmat ~" and stop if not
+  check_lhs(formula, distmat ~ .)
+  assign("distmat", distmat, environment(formula))
 
   set.seed(seed)
-  a_observed <- vegan::adonis(
-    formula = formula, data = data, permutations = permutations)
-  result <- tidy.adonis(a_observed)
+  a_observed <- vegan::adonis2(
+    formula = formula, data = data, permutations = permutations
+  )
+  result <- tidy.anova.cca(a_observed)
 
   if (!is.null(shuffle)) {
     rep_meas_vals <- data %>%
@@ -70,7 +72,8 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         method <- shuffle[var]
         shuffle_functions <- list(
           between = shuffle_between_groups,
-          within = shuffle_within_groups)
+          within = shuffle_within_groups
+        )
         # Use match.arg in case someone writes "bet" instead of "between"
         method <- match.arg(method, names(shuffle_functions))
         fcn <- shuffle_functions[[method]]
@@ -78,14 +81,14 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         new_vals <- fcn(old_vals, rep_meas_vals)
         trial_data[[var]] <- new_vals
       }
-      trial_a <- vegan::adonis(formula, trial_data, permutations = 4)
-      trial_result <- tidy.adonis(trial_a)
+      trial_a <- vegan::adonis2(formula, trial_data, permutations = 4)
+      trial_result <- tidy.anova.cca(trial_a)
       trial_result$statistic[term_idx]
     })
 
     if (nterms > 1) {
       fs_greater <- sweep(cbind(f_observed, fs_permuted), 1, f_observed, `>=`)
-      p_permuted <- apply(fs_greater, 1, function (x) sum(x) / length(x))
+      p_permuted <- apply(fs_greater, 1, function(x) sum(x) / length(x))
     } else {
       fs_greater <- c(f_observed, fs_permuted) >= f_observed
       p_permuted <- sum(fs_greater) / length(fs_greater)
@@ -110,7 +113,7 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
   result_main <- adonisplus(data, ...) %>%
     dplyr::mutate(comparison = paste("All", var_name)) %>%
     dplyr::select(comparison, term, dplyr::everything()) %>%
-    dplyr::filter(!(term %in% c("Residuals", "Total")))
+    dplyr::filter(!(term %in% c("Residual", "Total")))
 
   var_levels <- data %>%
     dplyr::pull({{ which }}) %>%
@@ -118,13 +121,13 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
     levels()
   pairs <- utils::combn(var_levels, 2, simplify = FALSE)
 
-  make_pairwise_comparison <- function (pair) {
+  make_pairwise_comparison <- function(pair) {
     pair_data <- data %>%
       dplyr::filter({{ which }} %in% pair)
     adonisplus(pair_data, ...) %>%
-        dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
-        dplyr::select(comparison, term, dplyr::everything()) %>%
-        dplyr::filter(!(term %in% c("Residuals", "Total")))
+      dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
+      dplyr::select(comparison, term, dplyr::everything()) %>%
+      dplyr::filter(!(term %in% c("Residual", "Total")))
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) %>%
     dplyr::bind_rows()

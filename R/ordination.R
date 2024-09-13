@@ -19,9 +19,9 @@
 #'
 #'   For \code{plot.pcoaplus}, a ggplot object.
 #' @export
-pcoaplus <- function (data, distmat, sample_id_var = SampleID, num_axes = 2) {
+pcoaplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
   num_axes <- as.integer(num_axes)
-  stopifnot("num_axes must be 2 or more"= num_axes >= 2)
+  stopifnot("num_axes must be 2 or more" = num_axes >= 2)
   axis_numbers <- 1:num_axes
   axis_names <- paste0("Axis.", axis_numbers)
 
@@ -55,7 +55,7 @@ pcoaplus <- function (data, distmat, sample_id_var = SampleID, num_axes = 2) {
 
 #' @describeIn pcoaplus Make a principal coordinates scatter plot
 #' @export
-plot.pcoaplus <- function (x, ...) {
+plot.pcoaplus <- function(x, ...) {
   x %>%
     ggplot2::ggplot() +
     ggplot2::geom_point(ggplot2::aes(x = Axis.1, y = Axis.2, ...)) +

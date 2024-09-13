@@ -3,6 +3,12 @@
 
 # adonisplus
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/workflows/R-CMD-check/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions)
+[![codecov](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/graph/badge.svg?token=6nUM8dHotb)](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus)
+<!-- badges: end -->
+
 The `adonisplus` package provides some utilities for permutational
 multivariate analysis of variance, also known as adonis or PERMANOVA.
 
@@ -55,8 +61,9 @@ farmm_samples
     ##  8 farmm.9005.09       9005         9 Omnivore post           180     70    24
     ##  9 farmm.9005.10       9005        10 Omnivore post           180     70    24
     ## 10 farmm.9005.11       9005        11 Omnivore post           180     70    24
-    ## # … with 404 more rows, and 3 more variables: bacterial_16S_copies <dbl>,
-    ## #   num_reads <dbl>, host_frac <dbl>
+    ## # ℹ 404 more rows
+    ## # ℹ 3 more variables: bacterial_16S_copies <dbl>, num_reads <dbl>,
+    ## #   host_frac <dbl>
 
 The first column, `sample_id` provides a unique ID for each sample,
 which is also used to label the samples in the distance matrix.
@@ -92,18 +99,19 @@ farmm_final %>%
     ## # A tibble: 30 × 13
     ##    sample_id  Axis.1 Axis.2 subject_id study_day diet  antibiotics height weight
     ##    <chr>       <dbl>  <dbl>      <dbl>     <int> <fct> <fct>        <dbl>  <dbl>
-    ##  1 farmm.90… -0.251   0.271       9005        15 Omni… post          180    70  
-    ##  2 farmm.90…  0.0656 -0.203       9006        15 Omni… post          176    87.3
-    ##  3 farmm.90… -0.255   0.146       9010        15 Omni… post          171.   63.4
-    ##  4 farmm.90… -0.167   0.218       9015        15 Omni… post          173    61.3
-    ##  5 farmm.90… -0.309   0.209       9019        15 Omni… post          174.   66.3
-    ##  6 farmm.90… -0.0329 -0.349       9030        15 Omni… post          180.   90  
-    ##  7 farmm.90… -0.0226 -0.115       9033        15 Omni… post          170.   78.6
-    ##  8 farmm.90…  0.0233 -0.439       9036        15 Omni… post          178    75.8
-    ##  9 farmm.90… -0.131  -0.186       9037        15 Omni… post          176    71.3
-    ## 10 farmm.90… -0.147  -0.180       9040        15 Omni… post          173    71  
-    ## # … with 20 more rows, and 4 more variables: age <dbl>,
-    ## #   bacterial_16S_copies <dbl>, num_reads <dbl>, host_frac <dbl>
+    ##  1 farmm.90… -0.251  -0.271       9005        15 Omni… post          180    70  
+    ##  2 farmm.90…  0.0656  0.203       9006        15 Omni… post          176    87.3
+    ##  3 farmm.90… -0.255  -0.146       9010        15 Omni… post          171.   63.4
+    ##  4 farmm.90… -0.167  -0.218       9015        15 Omni… post          173    61.3
+    ##  5 farmm.90… -0.309  -0.209       9019        15 Omni… post          174.   66.3
+    ##  6 farmm.90… -0.0329  0.349       9030        15 Omni… post          180.   90  
+    ##  7 farmm.90… -0.0226  0.115       9033        15 Omni… post          170.   78.6
+    ##  8 farmm.90…  0.0233  0.439       9036        15 Omni… post          178    75.8
+    ##  9 farmm.90… -0.131   0.186       9037        15 Omni… post          176    71.3
+    ## 10 farmm.90… -0.147   0.180       9040        15 Omni… post          173    71  
+    ## # ℹ 20 more rows
+    ## # ℹ 4 more variables: age <dbl>, bacterial_16S_copies <dbl>, num_reads <dbl>,
+    ## #   host_frac <dbl>
 
 We see that `pcoaplus()` has returned a new data frame, with two new
 columns, `Axis.1` and `Axis.2`. We could use this to go straight into
@@ -141,12 +149,12 @@ farmm_final %>%
     sample_id_var = sample_id)
 ```
 
-    ## # A tibble: 3 × 7
-    ##   term         df sumsq meansq statistic r.squared p.value
-    ##   <chr>     <dbl> <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 diet          2  1.84  0.919      2.73     0.168   0.001
-    ## 2 Residuals    27  9.07  0.336     NA        0.832  NA    
-    ## 3 Total        29 10.9  NA         NA        1      NA
+    ## # A tibble: 3 × 6
+    ##   term        df sumsq r.squared statistic p.value
+    ##   <chr>    <dbl> <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 diet         2  1.84     0.168      2.73   0.001
+    ## 2 Residual    27  9.07     0.832     NA     NA    
+    ## 3 Total       29 10.9      1         NA     NA
 
 Our result looks like the output of `adonis()` from the `vegan` package,
 but it’s been tidied up into a data frame. If you have your own results
@@ -168,13 +176,13 @@ farmm_final %>%
     sample_id_var = sample_id, which = diet)
 ```
 
-    ## # A tibble: 4 × 8
-    ##   comparison       term     df sumsq meansq statistic r.squared p.value
-    ##   <chr>            <chr> <dbl> <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 All diet         diet      2 1.84   0.919      2.73    0.168    0.001
-    ## 2 Omnivore - Vegan diet      1 0.445  0.445      1.30    0.0671   0.159
-    ## 3 Omnivore - EEN   diet      1 1.15   1.15       3.39    0.159    0.001
-    ## 4 Vegan - EEN      diet      1 1.16   1.16       3.56    0.165    0.001
+    ## # A tibble: 4 × 7
+    ##   comparison       term     df sumsq r.squared statistic p.value
+    ##   <chr>            <chr> <dbl> <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 All diet         diet      2 1.84     0.168       2.73   0.001
+    ## 2 Omnivore - Vegan diet      1 0.445    0.0671      1.30   0.159
+    ## 3 Omnivore - EEN   diet      1 1.15     0.159       3.39   0.001
+    ## 4 Vegan - EEN      diet      1 1.16     0.165       3.56   0.001
 
 The results are as expected. So, far we could have done all of this work
 using the functions in `vegan` and `ape`, without much difficulty.
@@ -227,20 +235,20 @@ farmm_preabx %>%
     shuffle = c(diet = "between", study_day = "within"))
 ```
 
-    ## # A tibble: 5 × 7
-    ##   term              df  sumsq meansq statistic r.squared p.value
-    ##   <chr>          <dbl>  <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 diet               2  4.34   2.17       8.62    0.104    0.001
-    ## 2 study_day          1  0.504  0.504      2.00    0.0121   0.001
-    ## 3 diet:study_day     2  0.663  0.332      1.32    0.0159   0.001
-    ## 4 Residuals        144 36.2    0.252     NA       0.868   NA    
-    ## 5 Total            149 41.7   NA         NA       1       NA
+    ## # A tibble: 5 × 6
+    ##   term              df  sumsq r.squared statistic p.value
+    ##   <chr>          <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 diet               2  4.34     0.104       8.62   0.001
+    ## 2 study_day          1  0.504    0.0121      2.00   0.001
+    ## 3 diet:study_day     2  0.663    0.0159      1.32   0.001
+    ## 4 Residual         144 36.2      0.868      NA     NA    
+    ## 5 Total            149 41.7      1          NA     NA
 
 If you run this function yourself, you’ll notice that it takes a lot
 longer than it takes to run `adonis()`. As we randomly re-assign diets
 and time points, we re-run the `adonis()` function once for each
-re-assignment or permutation.[1] The functions used by `adonisplus()` to
-carry out the restricted permutations are named
+re-assignment or permutation.[^1] The functions used by `adonisplus()`
+to carry out the restricted permutations are named
 `shuffle_within_groups()` and `shuffle_between_groups()`, if you want to
 use them elsewhere.
 
@@ -257,21 +265,21 @@ farmm_preabx %>%
     which = diet)
 ```
 
-    ## # A tibble: 12 × 8
-    ##    comparison       term              df  sumsq meansq statistic r.squared p.value
-    ##    <chr>            <chr>          <dbl>  <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ##  1 All diet         diet               2 4.34   2.17       8.62    0.104     0.001
-    ##  2 All diet         study_day          1 0.504  0.504      2.00    0.0121    0.001
-    ##  3 All diet         diet:study_day     2 0.663  0.332      1.32    0.0159    0.001
-    ##  4 Omnivore - Vegan diet               1 1.68   1.68       6.61    0.0635    0.119
-    ##  5 Omnivore - Vegan study_day          1 0.0804 0.0804     0.317   0.00305   0.726
-    ##  6 Omnivore - Vegan diet:study_day     1 0.0358 0.0358     0.141   0.00136   0.988
-    ##  7 Omnivore - EEN   diet               1 1.89   1.89       7.59    0.0683    0.025
-    ##  8 Omnivore - EEN   study_day          1 0.628  0.628      2.53    0.0227    0.001
-    ##  9 Omnivore - EEN   diet:study_day     1 0.523  0.523      2.10    0.0189    0.001
-    ## 10 Vegan - EEN      diet               1 2.99   2.99      11.8     0.109     0.001
-    ## 11 Vegan - EEN      study_day          1 0.668  0.668      2.64    0.0245    0.001
-    ## 12 Vegan - EEN      diet:study_day     1 0.399  0.399      1.58    0.0146    0.001
+    ## # A tibble: 12 × 7
+    ##    comparison       term              df  sumsq r.squared statistic p.value
+    ##    <chr>            <chr>          <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
+    ##  1 All diet         diet               2 4.34     0.104       8.62    0.001
+    ##  2 All diet         study_day          1 0.504    0.0121      2.00    0.001
+    ##  3 All diet         diet:study_day     2 0.663    0.0159      1.32    0.001
+    ##  4 Omnivore - Vegan diet               1 1.68     0.0635      6.61    0.119
+    ##  5 Omnivore - Vegan study_day          1 0.0804   0.00305     0.317   0.726
+    ##  6 Omnivore - Vegan diet:study_day     1 0.0358   0.00136     0.141   0.988
+    ##  7 Omnivore - EEN   diet               1 1.89     0.0683      7.59    0.025
+    ##  8 Omnivore - EEN   study_day          1 0.628    0.0227      2.53    0.001
+    ##  9 Omnivore - EEN   diet:study_day     1 0.523    0.0189      2.10    0.001
+    ## 10 Vegan - EEN      diet               1 2.99     0.109      11.8     0.001
+    ## 11 Vegan - EEN      study_day          1 0.668    0.0245      2.64    0.001
+    ## 12 Vegan - EEN      diet:study_day     1 0.399    0.0146      1.58    0.001
 
 In the pairwise comparisons, we find that the microbiome of the omnivore
 and vegan groups was not different during the pre-antibiotics period,
@@ -283,9 +291,9 @@ same distance matrix, `farmm_bc`. Each time we called a function using
 the distances, the distance matrix was automatically filtered and
 re-arranged to match the samples in our data frame. How convenient!
 
-[1] In fact, the `adonis()` function has some built-in capability to
-carry out restricted permutations, but because the built-in methods
-permute the samples and not the study groups, the between-subject
-permutations don’t work if you don’t have exactly the same number of
-samples per subject. Consequently, our data set would not work with the
-built-in permutation methods in `adonis()`.
+[^1]: In fact, the `adonis()` function has some built-in capability to
+    carry out restricted permutations, but because the built-in methods
+    permute the samples and not the study groups, the between-subject
+    permutations don’t work if you don’t have exactly the same number of
+    samples per subject. Consequently, our data set would not work with
+    the built-in permutation methods in `adonis()`.
