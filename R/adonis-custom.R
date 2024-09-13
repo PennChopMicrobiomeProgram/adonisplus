@@ -44,7 +44,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
   set.seed(seed)
   a_observed <- vegan::adonis2(
-    formula = formula, data = data, permutations = permutations
+    formula = formula, data = data, permutations = permutations, by = "terms"
   )
   result <- tidy.anova.cca(a_observed)
 
@@ -81,7 +81,7 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         new_vals <- fcn(old_vals, rep_meas_vals)
         trial_data[[var]] <- new_vals
       }
-      trial_a <- vegan::adonis2(formula, trial_data, permutations = 4)
+      trial_a <- vegan::adonis2(formula, trial_data, permutations = 4, by = "terms")
       trial_result <- tidy.anova.cca(trial_a)
       trial_result$statistic[term_idx]
     })
