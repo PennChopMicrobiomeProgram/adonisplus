@@ -20,6 +20,9 @@
 #' @param permutations Number of permutations.
 #' @param seed Random seed, set just before the initial call to
 #'   \code{vegan::adonis()}.
+#' @param adonis2_by "by" argument passed to adonis2 for 
+#'    sequential ("terms"), overall (NULL), marginal ("margin") testing type.
+#'    Default is "terms".
 #' @return The results from \code{vegan::adonis()} in tidy format.
 #' @details
 #' A typical experimental design has subjects in a few groups sampled
