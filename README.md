@@ -6,7 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/workflows/R-CMD-check/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions)
-[![codecov](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/graph/badge.svg?token=6nUM8dHotb)](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus)
+[![Codecov test
+coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus?branch=master)
 <!-- badges: end -->
 
 The `adonisplus` package provides some utilities for permutational
@@ -152,7 +153,7 @@ farmm_final %>%
     ## # A tibble: 3 × 6
     ##   term        df sumsq r.squared statistic p.value
     ##   <chr>    <dbl> <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 diet         2  1.84     0.168      2.73   0.001
+    ## 1 Model        2  1.84     0.168      2.73   0.001
     ## 2 Residual    27  9.07     0.832     NA     NA    
     ## 3 Total       29 10.9      1         NA     NA
 
@@ -179,10 +180,10 @@ farmm_final %>%
     ## # A tibble: 4 × 7
     ##   comparison       term     df sumsq r.squared statistic p.value
     ##   <chr>            <chr> <dbl> <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 All diet         diet      2 1.84     0.168       2.73   0.001
-    ## 2 Omnivore - Vegan diet      1 0.445    0.0671      1.30   0.159
-    ## 3 Omnivore - EEN   diet      1 1.15     0.159       3.39   0.001
-    ## 4 Vegan - EEN      diet      1 1.16     0.165       3.56   0.001
+    ## 1 All diet         Model     2 1.84     0.168       2.73   0.001
+    ## 2 Omnivore - Vegan Model     1 0.445    0.0671      1.30   0.159
+    ## 3 Omnivore - EEN   Model     1 1.15     0.159       3.39   0.001
+    ## 4 Vegan - EEN      Model     1 1.16     0.165       3.56   0.001
 
 The results are as expected. So, far we could have done all of this work
 using the functions in `vegan` and `ape`, without much difficulty.
@@ -235,14 +236,12 @@ farmm_preabx %>%
     shuffle = c(diet = "between", study_day = "within"))
 ```
 
-    ## # A tibble: 5 × 6
-    ##   term              df  sumsq r.squared statistic p.value
-    ##   <chr>          <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ## 1 diet               2  4.34     0.104       8.62   0.001
-    ## 2 study_day          1  0.504    0.0121      2.00   0.001
-    ## 3 diet:study_day     2  0.663    0.0159      1.32   0.001
-    ## 4 Residual         144 36.2      0.868      NA     NA    
-    ## 5 Total            149 41.7      1          NA     NA
+    ## # A tibble: 3 × 6
+    ##   term        df sumsq r.squared statistic p.value
+    ##   <chr>    <dbl> <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 Model        5  5.51     0.132      4.38   0.001
+    ## 2 Residual   144 36.2      0.868     NA     NA    
+    ## 3 Total      149 41.7      1         NA     NA
 
 If you run this function yourself, you’ll notice that it takes a lot
 longer than it takes to run `adonis()`. As we randomly re-assign diets
@@ -265,21 +264,13 @@ farmm_preabx %>%
     which = diet)
 ```
 
-    ## # A tibble: 12 × 7
-    ##    comparison       term              df  sumsq r.squared statistic p.value
-    ##    <chr>            <chr>          <dbl>  <dbl>     <dbl>     <dbl>   <dbl>
-    ##  1 All diet         diet               2 4.34     0.104       8.62    0.001
-    ##  2 All diet         study_day          1 0.504    0.0121      2.00    0.001
-    ##  3 All diet         diet:study_day     2 0.663    0.0159      1.32    0.001
-    ##  4 Omnivore - Vegan diet               1 1.68     0.0635      6.61    0.119
-    ##  5 Omnivore - Vegan study_day          1 0.0804   0.00305     0.317   0.726
-    ##  6 Omnivore - Vegan diet:study_day     1 0.0358   0.00136     0.141   0.988
-    ##  7 Omnivore - EEN   diet               1 1.89     0.0683      7.59    0.025
-    ##  8 Omnivore - EEN   study_day          1 0.628    0.0227      2.53    0.001
-    ##  9 Omnivore - EEN   diet:study_day     1 0.523    0.0189      2.10    0.001
-    ## 10 Vegan - EEN      diet               1 2.99     0.109      11.8     0.001
-    ## 11 Vegan - EEN      study_day          1 0.668    0.0245      2.64    0.001
-    ## 12 Vegan - EEN      diet:study_day     1 0.399    0.0146      1.58    0.001
+    ## # A tibble: 4 × 7
+    ##   comparison       term     df sumsq r.squared statistic p.value
+    ##   <chr>            <chr> <dbl> <dbl>     <dbl>     <dbl>   <dbl>
+    ## 1 All diet         Model     5  5.51    0.132       4.38   0.001
+    ## 2 Omnivore - Vegan Model     3  1.79    0.0679      2.36   0.15 
+    ## 3 Omnivore - EEN   Model     3  3.04    0.110       4.07   0.001
+    ## 4 Vegan - EEN      Model     3  4.06    0.149       5.35   0.001
 
 In the pairwise comparisons, we find that the microbiome of the omnivore
 and vegan groups was not different during the pre-antibiotics period,
