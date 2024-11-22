@@ -33,3 +33,4 @@ Depends:
 Suggests:
     covr,
     testthat
+
