@@ -16,7 +16,7 @@ Description: Contains a tidy method for adonis results, custom permutation
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports:
     generics (>= 0.0.2),
     rlang,
@@ -33,4 +33,3 @@ Depends:
 Suggests:
     covr,
     testthat
-

@@ -1,4 +1,4 @@
-#' Principal coordinates analysis, plus
+#' Principal coordinates analysis (PCoA), plus
 #'
 #' @param data A data frame giving information on the objects for the PCoA.
 #' @param distmat A matrix or \code{dist} object giving the distances between
@@ -62,4 +62,56 @@ plot.pcoaplus <- function(x, ...) {
     ggplot2::coord_equal() +
     ggplot2::xlab(attr(x, "axislabel")[1]) +
     ggplot2::ylab(attr(x, "axislabel")[2])
+}
+
+#' Non-metric multidimensional scaling (NMDS), plus
+#'
+#' @param data A data frame giving information on the objects for the NMDS.
+#' @param distmat A matrix or \code{dist} object giving the distances between
+#'   objects in \code{data}. The distance matrix can contain distances between
+#'   additional objects not found in \code{data}, but if any of the objects in
+#'   \code{data} is missing, an error will occur.
+#' @param sample_id_var The column in \code{data} that gives the identifiers
+#'   for each row, used to find the matching distances in \code{distmat}.
+#' @param num_axes The number of NMDS axes to return in the output.
+#' @param x A tibble returned by \code{pcoaplus}.
+#' @param ... Additional aesthetic mappings for ggplot.
+#' @return For \code{nmdsplus}, a tibble with new columns giving the position
+#'   of each object along the NMDS axes. We add an additional
+#'   class to the resultant tibble (\code{"nmdsplus"}) to facilitate plotting.
+#'   The attribute "stress" gives the stress in the NMDS.
+#'
+#'   For \code{plot.nmdsplus}, a ggplot object.
+#' @export
+nmdsplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
+  num_axes <- as.integer(num_axes)
+  stopifnot("num_axes must be 2 or more" = num_axes >= 2)
+
+  sample_ids <- data %>%
+    dplyr::pull({{ sample_id_var }}) %>%
+    as.character()
+  stopifnot("Duplicated sample IDs" = anyDuplicated(sample_ids) == 0)
+
+  distmat <- usedist::dist_subset(distmat, sample_ids)
+  sample_id_var_name <- rlang::as_name(rlang::ensym(sample_id_var))
+  nmds_obj <- vegan::monoMDS(distmat, k = num_axes)
+  nmds_df <- nmds_obj$points %>%
+    `[`(sample_ids, ) %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column(sample_id_var_name) %>%
+    tibble::as_tibble() %>%
+    dplyr::left_join(data, by = sample_id_var_name)
+
+  attr(nmds_df, "stress") <- nmds_obj$stress
+  class(nmds_df) <- c("nmdsplus", class(nmds_df))
+  nmds_df
+}
+
+
+#' @describeIn nmdsplus Make an NMDS scatter plot
+#' @export
+plot.nmdsplus <- function(x, ...) {
+  x %>%
+    ggplot2::ggplot() +
+    ggplot2::geom_point(ggplot2::aes(x = MDS1, y = MDS2, ...))
 }

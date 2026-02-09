@@ -42,6 +42,21 @@ expected_axes <- tibble::tibble(
   )
 )
 
+expected_nmds_axes <- tibble::tibble(
+  MDS1 = c(
+    0.836706003503475, -0.478138656124125, -0.873168624865947,
+    0.831612773313092, -0.873168624865947, 1.12730524434323,
+    0.347992717293982, 0.213938532476495, -0.476699598859632,
+    -0.873168624865126, 0.216788858650501
+  ),
+  MDS2 = c(
+    0.724394134805183, -1.0267096839492, 0.000665297749562208,
+    -0.72769854123764, 0.000665297749561982, -0.00467674105569537,
+    0.00496749526862173, -1.0525703201631, 1.02721958016895,
+    0.00066529774956238, 1.05307818291419
+  )
+)
+
 expected_pctvar <- structure(
   c(32.4014704674688, 23.8948365133504, 13.9227882293832),
   names = c("Axis.1", "Axis.2", "Axis.3")
@@ -51,6 +66,15 @@ expected_axislabel <- structure(
   c("PCoA axis 1 (32%)", "PCoA axis 2 (24%)", "PCoA axis 3 (14%)"),
   names = c("Axis.1", "Axis.2", "Axis.3")
 )
+
+test_that("nmdsplus works", {
+  obs <- nmdsplus(example_data, example_dist)
+  expect_equal(class(obs), c("nmdsplus", "tbl_df", "tbl", "data.frame"))
+  expect_equal(nrow(obs), nrow(example_data))
+  expect_equal(obs$MDS1, expected_nmds_axes$MDS1)
+  expect_equal(obs$MDS2, expected_nmds_axes$MDS2)
+  expect_equal(attr(obs, "stress"), 0.304631238765846)
+})
 
 test_that("pcoaplus works with default arguments", {
   obs <- pcoaplus(example_data, example_dist)

@@ -3,7 +3,7 @@
 \name{pcoaplus}
 \alias{pcoaplus}
 \alias{plot.pcoaplus}
-\title{Principal coordinates analysis, plus}
+\title{Principal coordinates analysis (PCoA), plus}
 \usage{
 pcoaplus(data, distmat, sample_id_var = SampleID, num_axes = 2)
 
@@ -37,7 +37,7 @@ For \code{pcoaplus}, a tibble with new columns giving the position
   For \code{plot.pcoaplus}, a ggplot object.
 }
 \description{
-Principal coordinates analysis, plus
+Principal coordinates analysis (PCoA), plus
 }
 \section{Methods (by generic)}{
 \itemize{
