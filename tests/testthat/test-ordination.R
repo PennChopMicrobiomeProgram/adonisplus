@@ -1,3 +1,8 @@
+# Choose arbitrary sign of axis so first element > 0
+ax <- function(x) {
+  if (x[1] < 0) -x else x
+}
+
 example_data <- tibble::tibble(
   SampleID = c(
     "C1", "C2", "C3", "C4", "C5", "P1", "P2", "P3", "P4", "P5", "P6"
@@ -71,8 +76,8 @@ test_that("nmdsplus works", {
   obs <- nmdsplus(example_data, example_dist)
   expect_equal(class(obs), c("nmdsplus", "tbl_df", "tbl", "data.frame"))
   expect_equal(nrow(obs), nrow(example_data))
-  expect_equal(obs$MDS1, expected_nmds_axes$MDS1)
-  expect_equal(obs$MDS2, expected_nmds_axes$MDS2)
+  expect_equal(ax(obs$MDS1), ax(expected_nmds_axes$MDS1))
+  expect_equal(ax(obs$MDS2), ax(expected_nmds_axes$MDS2))
   expect_equal(attr(obs, "stress"), 0.304631238765846)
 })
 
@@ -80,15 +85,15 @@ test_that("pcoaplus works with default arguments", {
   obs <- pcoaplus(example_data, example_dist)
   expect_equal(class(obs), c("pcoaplus", "tbl_df", "tbl", "data.frame"))
   expect_equal(nrow(obs), nrow(example_data))
-  expect_equal(obs$Axis.1, expected_axes$Axis.1)
-  expect_equal(obs$Axis.2, expected_axes$Axis.2)
+  expect_equal(ax(obs$Axis.1), ax(expected_axes$Axis.1))
+  expect_equal(ax(obs$Axis.2), ax(expected_axes$Axis.2))
   expect_equal(attr(obs, "pctvar"), expected_pctvar[1:2])
   expect_equal(attr(obs, "axislabel"), expected_axislabel[1:2])
 })
 
 test_that("pcoaplus works with more than two axes", {
   obs <- pcoaplus(example_data, example_dist, num_axes = 3)
-  expect_equal(obs$Axis.3, expected_axes$Axis.3)
+  expect_equal(ax(obs$Axis.3), ax(expected_axes$Axis.3))
   expect_equal(attr(obs, "pctvar"), expected_pctvar[1:3])
   expect_equal(attr(obs, "axislabel"), expected_axislabel[1:3])
 })
