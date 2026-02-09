@@ -6,7 +6,12 @@
 #'   shuffled within each group.
 #' @export
 shuffle_within_groups <- function(x, g) {
-  stats::ave(x, g, FUN = sample)
+  stats::ave(x, g, FUN = resample)
+}
+
+# Safer version of sample() from R documentation
+resample <- function(x, ...) {
+  x[sample.int(length(x), ...)]
 }
 
 #' Shuffle a vector, but swap whole groups

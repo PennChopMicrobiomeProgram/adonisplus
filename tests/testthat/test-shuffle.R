@@ -14,6 +14,15 @@ test_that("Shuffle within groups works for unevenly sized groups", {
   expect_equal(sort(swg[4:5]), c(2, 3))
 })
 
+test_that("Shuffle within groups works for numeric values of length 1", {
+  x <- 11:15
+  g <- c("g1", "g1", "g1", "g1", "g2")
+  swg <- shuffle_within_groups(x, g)
+
+  expect_equal(sort(swg[1:4]), c(11, 12, 13, 14))
+  expect_equal(swg[5], 15)
+})
+
 test_that("Shuffle between groups shuffles entire blocks", {
   g <- factor(c(1, 1, 2, 2, 3, 3))
   sbg <- shuffle_between_groups(c(4, 4, 5, 5, 6, 6), g)
