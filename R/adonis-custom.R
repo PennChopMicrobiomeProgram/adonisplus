@@ -31,9 +31,16 @@
 #' subjects, preserving the value within each subject. Conversely, the values
 #' of the time point will be shuffled only within each subject.
 #' @export
-adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
-                       rep_meas_var = subject_id, shuffle = NULL,
-                       permutations = 999, seed = 42) {
+adonisplus <- function(
+  data,
+  distmat,
+  formula,
+  sample_id_var = SampleID,
+  rep_meas_var = subject_id,
+  shuffle = NULL,
+  permutations = 999,
+  seed = 42
+) {
   sample_ids <- data |>
     dplyr::pull({{ sample_id_var }}) |>
     as.character()
@@ -44,7 +51,10 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
   set.seed(seed)
   a_observed <- vegan::adonis2(
-    formula = formula, data = data, permutations = permutations, by = "terms"
+    formula = formula,
+    data = data,
+    permutations = permutations,
+    by = "terms"
   )
   result <- tidy.anova.cca(a_observed)
 
@@ -82,8 +92,11 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         trial_data[[var]] <- new_vals
       }
       trial_a <- vegan::adonis2(
-        formula, trial_data, permutations = 4, by = "terms"
-        )
+        formula,
+        trial_data,
+        permutations = 4,
+        by = "terms"
+      )
       trial_result <- tidy.anova.cca(trial_a)
       trial_result$statistic[term_idx]
     })

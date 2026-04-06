@@ -3,8 +3,12 @@ check_lhs <- function(formula, expected) {
   expected_lhs <- expected[[2]]
   if (formula_lhs != expected_lhs) {
     stop(
-      "LHS of formula must be exactly '", expected_lhs, "'. ",
-      "Saw '", formula_lhs, "'."
+      "LHS of formula must be exactly '",
+      expected_lhs,
+      "'. ",
+      "Saw '",
+      formula_lhs,
+      "'."
     )
   }
 }
