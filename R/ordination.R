@@ -25,19 +25,19 @@ pcoaplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
   axis_numbers <- 1:num_axes
   axis_names <- paste0("Axis.", axis_numbers)
 
-  sample_ids <- data %>%
-    dplyr::pull({{ sample_id_var }}) %>%
+  sample_ids <- data |>
+    dplyr::pull({{ sample_id_var }}) |>
     as.character()
   stopifnot("Duplicated sample IDs" = anyDuplicated(sample_ids) == 0)
 
   distmat <- usedist::dist_subset(distmat, sample_ids)
   sample_id_var_name <- rlang::as_name(rlang::ensym(sample_id_var))
   pcoa_obj <- ape::pcoa(distmat)
-  pcoa_df <- pcoa_obj$vectors %>%
-    `[`(sample_ids, axis_names) %>%
-    as.data.frame() %>%
-    tibble::rownames_to_column(sample_id_var_name) %>%
-    tibble::as_tibble() %>%
+  pcoa_df <- pcoa_obj$vectors |>
+    (\(x) x[sample_ids, axis_names])() |>
+    as.data.frame() |>
+    tibble::rownames_to_column(sample_id_var_name) |>
+    tibble::as_tibble() |>
     dplyr::left_join(data, by = sample_id_var_name)
 
   pctvar <- (pcoa_obj$values$Relative_eig * 100)[axis_numbers]
@@ -56,7 +56,7 @@ pcoaplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
 #' @describeIn pcoaplus Make a principal coordinates scatter plot
 #' @export
 plot.pcoaplus <- function(x, ...) {
-  x %>%
+  x |>
     ggplot2::ggplot() +
     ggplot2::geom_point(ggplot2::aes(x = Axis.1, y = Axis.2, ...)) +
     ggplot2::coord_equal() +
@@ -87,19 +87,19 @@ nmdsplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
   num_axes <- as.integer(num_axes)
   stopifnot("num_axes must be 2 or more" = num_axes >= 2)
 
-  sample_ids <- data %>%
-    dplyr::pull({{ sample_id_var }}) %>%
+  sample_ids <- data |>
+    dplyr::pull({{ sample_id_var }}) |>
     as.character()
   stopifnot("Duplicated sample IDs" = anyDuplicated(sample_ids) == 0)
 
   distmat <- usedist::dist_subset(distmat, sample_ids)
   sample_id_var_name <- rlang::as_name(rlang::ensym(sample_id_var))
   nmds_obj <- vegan::monoMDS(distmat, k = num_axes)
-  nmds_df <- nmds_obj$points %>%
-    `[`(sample_ids, ) %>%
-    as.data.frame() %>%
-    tibble::rownames_to_column(sample_id_var_name) %>%
-    tibble::as_tibble() %>%
+  nmds_df <- nmds_obj$points |>
+    (\(x) x[sample_ids, ])() |>
+    as.data.frame() |>
+    tibble::rownames_to_column(sample_id_var_name) |>
+    tibble::as_tibble() |>
     dplyr::left_join(data, by = sample_id_var_name)
 
   attr(nmds_df, "stress") <- nmds_obj$stress
@@ -111,7 +111,7 @@ nmdsplus <- function(data, distmat, sample_id_var = SampleID, num_axes = 2) {
 #' @describeIn nmdsplus Make an NMDS scatter plot
 #' @export
 plot.nmdsplus <- function(x, ...) {
-  x %>%
+  x |>
     ggplot2::ggplot() +
     ggplot2::geom_point(ggplot2::aes(x = MDS1, y = MDS2, ...))
 }

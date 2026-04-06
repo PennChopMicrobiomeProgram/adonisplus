@@ -29,7 +29,7 @@ Imports:
     ggplot2,
     stringr
 Depends:
-    R (>= 2.10)
+    R (>= 4.1.0)
 Suggests:
     covr,
     testthat

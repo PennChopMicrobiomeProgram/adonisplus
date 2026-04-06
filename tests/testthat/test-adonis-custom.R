@@ -22,7 +22,7 @@ example_dist <- structure(
 )
 
 test_that("adonispost works", {
-  example_data_3groups <- example_data %>%
+  example_data_3groups <- example_data |>
     dplyr::mutate(study_group = rep(c("G1", "G2", "G3", "G1", "G2", "G3"), c(2, 2, 1, 2, 2, 2)))
   observed <- adonispost(
     example_data_3groups, example_dist, distmat ~ study_group,
