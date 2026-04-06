@@ -22,7 +22,13 @@ generics::tidy
 tidy.adonis <- function(x, ...) {
   ret <- tibble::as_tibble(x$aov.tab, rownames = "term")
   colnames(ret) <- c(
-    "term", "df", "sumsq", "meansq", "statistic", "r.squared", "p.value"
+    "term",
+    "df",
+    "sumsq",
+    "meansq",
+    "statistic",
+    "r.squared",
+    "p.value"
   )
   attr(ret, "heading") <- NULL
   ret
@@ -45,7 +51,12 @@ tidy.adonis <- function(x, ...) {
 tidy.anova.cca <- function(x, ...) {
   ret <- tibble::as_tibble(x, rownames = "term")
   colnames(ret) <- c(
-    "term", "df", "sumsq", "r.squared", "statistic", "p.value"
+    "term",
+    "df",
+    "sumsq",
+    "r.squared",
+    "statistic",
+    "p.value"
   )
   attr(ret, "Random.seed") <- NULL
   attr(ret, "F.perm") <- NULL

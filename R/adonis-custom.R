@@ -1,3 +1,5 @@
+utils::globalVariables(c("SampleID", "subject_id", "study_group", "term"))
+
 #' Permutational multivariate analysis of variance, plus
 #'
 #' @param data Data to use in the test.
@@ -31,11 +33,18 @@
 #' subjects, preserving the value within each subject. Conversely, the values
 #' of the time point will be shuffled only within each subject.
 #' @export
-adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
-                       rep_meas_var = subject_id, shuffle = NULL,
-                       permutations = 999, seed = 42) {
-  sample_ids <- data %>%
-    dplyr::pull({{ sample_id_var }}) %>%
+adonisplus <- function(
+  data,
+  distmat,
+  formula,
+  sample_id_var = SampleID,
+  rep_meas_var = subject_id,
+  shuffle = NULL,
+  permutations = 999,
+  seed = 42
+) {
+  sample_ids <- data |>
+    dplyr::pull({{ sample_id_var }}) |>
     as.character()
   distmat <- usedist::dist_subset(distmat, sample_ids)
   formula <- stats::as.formula(formula)
@@ -44,12 +53,15 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 
   set.seed(seed)
   a_observed <- vegan::adonis2(
-    formula = formula, data = data, permutations = permutations, by = "terms"
+    formula = formula,
+    data = data,
+    permutations = permutations,
+    by = "terms"
   )
   result <- tidy.anova.cca(a_observed)
 
   if (!is.null(shuffle)) {
-    rep_meas_vals <- data %>%
+    rep_meas_vals <- data |>
       dplyr::pull({{ rep_meas_var }})
 
     # Here, vars is the variables that will undergo custom permutations
@@ -82,8 +94,11 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
         trial_data[[var]] <- new_vals
       }
       trial_a <- vegan::adonis2(
-        formula, trial_data, permutations = 4, by = "terms"
-        )
+        formula,
+        trial_data,
+        permutations = 4,
+        by = "terms"
+      )
       trial_result <- tidy.anova.cca(trial_a)
       trial_result$statistic[term_idx]
     })
@@ -109,29 +124,43 @@ adonisplus <- function(data, distmat, formula, sample_id_var = SampleID,
 #'   comparison.
 #' @return The results in tidy format.
 #' @export
-adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
+adonispost <- function(
+  data,
+  ...,
+  which = study_group,
+  alpha = 0.05
+) {
   var_name <- rlang::as_name(rlang::ensym(which))
 
-  result_main <- adonisplus(data, ...) %>%
-    dplyr::mutate(comparison = paste("All", var_name)) %>%
-    dplyr::select(comparison, term, dplyr::everything()) %>%
+  result_cols <- c(
+    "comparison",
+    "term",
+    "df",
+    "sumsq",
+    "r.squared",
+    "statistic",
+    "p.value"
+  )
+  result_main <- adonisplus(data, ...) |>
+    dplyr::mutate(comparison = paste("All", var_name)) |>
+    dplyr::select(dplyr::all_of(result_cols)) |>
     dplyr::filter(!(term %in% c("Residual", "Total")))
 
-  var_levels <- data %>%
-    dplyr::pull({{ which }}) %>%
-    as.factor() %>%
+  var_levels <- data |>
+    dplyr::pull({{ which }}) |>
+    as.factor() |>
     levels()
   pairs <- utils::combn(var_levels, 2, simplify = FALSE)
 
   make_pairwise_comparison <- function(pair) {
-    pair_data <- data %>%
+    pair_data <- data |>
       dplyr::filter({{ which }} %in% pair)
-    adonisplus(pair_data, ...) %>%
-      dplyr::mutate(comparison = paste(pair, collapse = " - ")) %>%
-      dplyr::select(comparison, term, dplyr::everything()) %>%
+    adonisplus(pair_data, ...) |>
+      dplyr::mutate(comparison = paste(pair, collapse = " - ")) |>
+      dplyr::select(dplyr::all_of(result_cols)) |>
       dplyr::filter(!(term %in% c("Residual", "Total")))
   }
-  result_posthoc <- lapply(pairs, make_pairwise_comparison) %>%
+  result_posthoc <- lapply(pairs, make_pairwise_comparison) |>
     dplyr::bind_rows()
   dplyr::bind_rows(result_main, result_posthoc)
 }

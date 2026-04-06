@@ -6,7 +6,7 @@ output: github_document
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
-  fig.path = "tools/readme/"
+  fig.path = "man/figures/README-"
 )
 ```
 
@@ -17,8 +17,8 @@ devtools::load_all()
 # adonisplus
 
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/workflows/R-CMD-check/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions)
-  [![Codecov test coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus?branch=master)
+[![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus)
 <!-- badges: end -->
 
 The `adonisplus` package provides some utilities for permutational multivariate
@@ -67,9 +67,9 @@ the last time point obtained for each participant. We'll make a new data frame,
 `farmm_final`, containing just the samples we need.
 
 ```{r}
-farmm_final <- farmm_samples %>%
-  group_by(subject_id) %>%
-  filter(study_day == max(study_day)) %>%
+farmm_final <- farmm_samples |>
+  group_by(subject_id) |>
+  filter(study_day == max(study_day)) |>
   ungroup()
 ```
 
@@ -83,7 +83,7 @@ distance matrix over and over as you filter and re-arrange the samples. Here,
 we specify this column as `sample_id`.
 
 ```{r}
-farmm_final %>%
+farmm_final |>
   pcoaplus(distmat = farmm_bc, sample_id_var = sample_id)
 ```
 
@@ -95,8 +95,8 @@ default mapping to color the samples by diet. We also add a few elements to the
 `ggplot` object, to set the color scale and change the theme.
 
 ```{r farmm_final_pcoa}
-farmm_final %>%
-  pcoaplus(distmat = farmm_bc, sample_id_var = sample_id) %>%
+farmm_final |>
+  pcoaplus(distmat = farmm_bc, sample_id_var = sample_id) |>
   plot(color = diet) +
   scale_color_brewer(palette = "Set1") +
   theme_bw()
@@ -113,7 +113,7 @@ an additional argument to let the function know which column of the data frame
 corresponds to the IDs in the distance matrix.
 
 ```{r}
-farmm_final %>%
+farmm_final |>
   adonisplus(
     distmat = farmm_bc, formula = distmat ~ diet,
     sample_id_var = sample_id)
@@ -132,7 +132,7 @@ are the same as `adonisplus()`, but we add an additional argument, `which`, to
 specify the variable on which we want to carry out pairwise comparisons.
 
 ```{r}
-farmm_final %>%
+farmm_final |>
   adonispost(
     distmat = farmm_bc, formula = distmat ~ diet,
     sample_id_var = sample_id, which = diet)
@@ -148,8 +148,8 @@ time for each diet. To get an overview, we'll re-generate Figure 2A from the
 paper.
 
 ```{r farmm_pcoa}
-farmm_samples %>%
-  pcoaplus(distmat = farmm_bc, sample_id_var = "sample_id") %>%
+farmm_samples |>
+  pcoaplus(distmat = farmm_bc, sample_id_var = "sample_id") |>
   plot(color = study_day) +
   facet_grid(~ diet) +
   scale_color_viridis_c(direction = -1) +
@@ -166,7 +166,7 @@ To investigate both claims, we'll limit the data set to the pre-antibiotics
 period, and call it `farmm_preabx`.
 
 ```{r}
-farmm_preabx <- farmm_samples %>%
+farmm_preabx <- farmm_samples |>
   filter(antibiotics %in% "pre")
 ```
 
@@ -178,7 +178,7 @@ tell it to randomly re-assign diet between subjects, and randomly shuffle the
 study days within each subject.
 
 ```{r}
-farmm_preabx %>%
+farmm_preabx |>
   adonisplus(
     distmat = farmm_bc, formula = distmat ~ diet * study_day,
     sample_id_var = sample_id, rep_meas_var = subject_id,
@@ -202,7 +202,7 @@ diet pairs are different. As before, we use `adonispost()` and tell it to run
 pairwise comparisons of diet by setting `which = diet`.
 
 ```{r}
-farmm_preabx %>%
+farmm_preabx |>
   adonispost(
     distmat = farmm_bc, formula = distmat ~ diet * study_day,
     sample_id_var = sample_id, rep_meas_var = subject_id,
