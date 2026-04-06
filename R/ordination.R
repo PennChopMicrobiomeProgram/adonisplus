@@ -1,3 +1,5 @@
+utils::globalVariables(c("Axis.1", "Axis.2", "MDS1", "MDS2"))
+
 #' Principal coordinates analysis (PCoA), plus
 #'
 #' @param data A data frame giving information on the objects for the PCoA.
@@ -22,7 +24,7 @@
 pcoaplus <- function(
   data,
   distmat,
-  sample_id_var = SampleID, # nolint: object_usage_linter.
+  sample_id_var = SampleID,
   num_axes = 2
 ) {
   num_axes <- as.integer(num_axes)
@@ -63,7 +65,7 @@ pcoaplus <- function(
 plot.pcoaplus <- function(x, ...) {
   x |>
     ggplot2::ggplot() +
-    ggplot2::geom_point(ggplot2::aes(x = Axis.1, y = Axis.2, ...)) + # nolint
+    ggplot2::geom_point(ggplot2::aes(x = Axis.1, y = Axis.2, ...)) +
     ggplot2::coord_equal() +
     ggplot2::xlab(attr(x, "axislabel")[1]) +
     ggplot2::ylab(attr(x, "axislabel")[2])
@@ -91,7 +93,7 @@ plot.pcoaplus <- function(x, ...) {
 nmdsplus <- function(
   data,
   distmat,
-  sample_id_var = SampleID, # nolint: object_usage_linter.
+  sample_id_var = SampleID,
   num_axes = 2
 ) {
   num_axes <- as.integer(num_axes)
@@ -123,5 +125,5 @@ nmdsplus <- function(
 plot.nmdsplus <- function(x, ...) {
   x |>
     ggplot2::ggplot() +
-    ggplot2::geom_point(ggplot2::aes(x = MDS1, y = MDS2, ...)) # nolint
+    ggplot2::geom_point(ggplot2::aes(x = MDS1, y = MDS2, ...))
 }

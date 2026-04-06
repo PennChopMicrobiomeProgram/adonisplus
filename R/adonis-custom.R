@@ -1,3 +1,5 @@
+utils::globalVariables(c("SampleID", "subject_id", "study_group", "term"))
+
 #' Permutational multivariate analysis of variance, plus
 #'
 #' @param data Data to use in the test.
@@ -35,8 +37,8 @@ adonisplus <- function(
   data,
   distmat,
   formula,
-  sample_id_var = SampleID, # nolint: object_usage_linter.
-  rep_meas_var = subject_id, # nolint: object_usage_linter.
+  sample_id_var = SampleID,
+  rep_meas_var = subject_id,
   shuffle = NULL,
   permutations = 999,
   seed = 42
@@ -125,15 +127,24 @@ adonisplus <- function(
 adonispost <- function(
   data,
   ...,
-  which = study_group, # nolint: object_usage_linter.
+  which = study_group,
   alpha = 0.05
 ) {
   var_name <- rlang::as_name(rlang::ensym(which))
 
+  result_cols <- c(
+    "comparison",
+    "term",
+    "df",
+    "sumsq",
+    "r.squared",
+    "statistic",
+    "p.value"
+  )
   result_main <- adonisplus(data, ...) |>
     dplyr::mutate(comparison = paste("All", var_name)) |>
-    dplyr::select(comparison, term, dplyr::everything()) |> # nolint
-    dplyr::filter(!(term %in% c("Residual", "Total"))) # nolint
+    dplyr::select(dplyr::all_of(result_cols)) |>
+    dplyr::filter(!(term %in% c("Residual", "Total")))
 
   var_levels <- data |>
     dplyr::pull({{ which }}) |>
@@ -146,8 +157,8 @@ adonispost <- function(
       dplyr::filter({{ which }} %in% pair)
     adonisplus(pair_data, ...) |>
       dplyr::mutate(comparison = paste(pair, collapse = " - ")) |>
-      dplyr::select(comparison, term, dplyr::everything()) |> # nolint
-      dplyr::filter(!(term %in% c("Residual", "Total"))) # nolint
+      dplyr::select(dplyr::all_of(result_cols)) |>
+      dplyr::filter(!(term %in% c("Residual", "Total")))
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) |>
     dplyr::bind_rows()
