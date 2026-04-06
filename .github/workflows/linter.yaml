@@ -13,14 +13,16 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          # Super-Linter needs full git history to detect changed files
+          fetch-depth: 0
 
-      - name: Lint Code Base
-        uses: github/super-linter@v4
+      - name: Run Super-Linter
+        uses: [super-linter/super-linter@v7](https://github.com/marketplace/actions/super-linter)
         env:
-          VALIDATE_ALL_CODEBASE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-          VALIDATE_R_LINTR: true
-
+          VALIDATE_ALL_CODEBASE: true
+          VALIDATE_R: true
+          DEFAULT_BRANCH: main
           FILTER_REGEX_INCLUDE: R/.*|tests/.*\.R

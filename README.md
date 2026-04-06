@@ -5,9 +5,9 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/workflows/R-CMD-check/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions)
+[![R-CMD-check](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/PennChopMicrobiomeProgram/adonisplus/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
-coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/branch/master/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus?branch=master)
+coverage](https://codecov.io/gh/PennChopMicrobiomeProgram/adonisplus/graph/badge.svg)](https://app.codecov.io/gh/PennChopMicrobiomeProgram/adonisplus)
 <!-- badges: end -->
 
 The `adonisplus` package provides some utilities for permutational
