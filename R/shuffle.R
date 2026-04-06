@@ -24,7 +24,7 @@ shuffle_between_groups <- function(x, g) {
   g <- as.factor(g)
   x <- as.factor(x)
   # What is the value of x for every unique value of g?
-  x_vals_per_g <- tapply(x, g, unique, simplify = F)
+  x_vals_per_g <- tapply(x, g, unique, simplify = FALSE)
   # Check that x has one unique value for each value of g. If not, raise an
   # error with an informative message.
   if (!all(sapply(x_vals_per_g, length) == 1)) {

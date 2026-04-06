@@ -35,8 +35,8 @@ adonisplus <- function(
   data,
   distmat,
   formula,
-  sample_id_var = SampleID,
-  rep_meas_var = subject_id,
+  sample_id_var = SampleID, # nolint: object_usage_linter.
+  rep_meas_var = subject_id, # nolint: object_usage_linter.
   shuffle = NULL,
   permutations = 999,
   seed = 42
@@ -122,13 +122,18 @@ adonisplus <- function(
 #'   comparison.
 #' @return The results in tidy format.
 #' @export
-adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
+adonispost <- function(
+  data,
+  ...,
+  which = study_group, # nolint: object_usage_linter.
+  alpha = 0.05
+) {
   var_name <- rlang::as_name(rlang::ensym(which))
 
   result_main <- adonisplus(data, ...) |>
     dplyr::mutate(comparison = paste("All", var_name)) |>
-    dplyr::select(comparison, term, dplyr::everything()) |>
-    dplyr::filter(!(term %in% c("Residual", "Total")))
+    dplyr::select(comparison, term, dplyr::everything()) |> # nolint
+    dplyr::filter(!(term %in% c("Residual", "Total"))) # nolint
 
   var_levels <- data |>
     dplyr::pull({{ which }}) |>
@@ -141,8 +146,8 @@ adonispost <- function(data, ..., which = study_group, alpha = 0.05) {
       dplyr::filter({{ which }} %in% pair)
     adonisplus(pair_data, ...) |>
       dplyr::mutate(comparison = paste(pair, collapse = " - ")) |>
-      dplyr::select(comparison, term, dplyr::everything()) |>
-      dplyr::filter(!(term %in% c("Residual", "Total")))
+      dplyr::select(comparison, term, dplyr::everything()) |> # nolint
+      dplyr::filter(!(term %in% c("Residual", "Total"))) # nolint
   }
   result_posthoc <- lapply(pairs, make_pairwise_comparison) |>
     dplyr::bind_rows()
